@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sedan 3D — โครงสร้าง + สัดส่วน (Three.js)</title>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box} body{margin:0;background:#0f1720;color:#e8d8b0;font-family:Anuphan,sans-serif}
+  header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:#141c26;border-bottom:2px solid #4a3220}
+  header b{color:#f2a65a} header a{color:#f2a65a;text-decoration:none}
+  #wrap{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 52px)}
+  #panel{background:#1a2330;padding:12px;overflow:auto;border-right:2px solid #4a3220;font-size:13px}
+  #panel h3{margin:10px 0 6px;color:#f2a65a;font-size:14px}
+  .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  button{background:#2a2118;color:#e8d8b0;border:2px solid #4a3220;padding:7px 9px;cursor:pointer;border-radius:6px;font-family:inherit}
+  button.on{border-color:#f2a65a;background:#3a2c1c}
+  .sw{width:32px;height:32px;border-radius:50%;border:2px solid #fff3;cursor:pointer}
+  .sw.on{border-color:#f2a65a;outline:2px solid #f2a65a}
+  input[type=range]{width:100%}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  td{border-bottom:1px solid #ffffff18;padding:3px 4px} td:last-child{text-align:right;color:#fff}
+  #view{position:relative} canvas{display:block;width:100%;height:100%}
+  #hint{position:absolute;left:10px;bottom:10px;background:#000a;padding:8px 10px;font-size:12px;border-radius:8px;opacity:.9}
+  #labels{position:absolute;right:10px;top:10px;display:flex;gap:6px}
+  @media(max-width:800px){#wrap{grid-template-columns:1fr;grid-template-rows:auto 60vh}#panel{order:2}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<header><b>🚗 SEDAN 3D</b><span>ซีดาน D-Segment · สเกลจริง 1 unit = 1 เมตร · Three.js</span>
+<a href="index.html">← เกม</a><a href="viewer.html">🧊 Asset Viewer</a></header>
+<div id="wrap">
+<div id="panel">
+  <h3>🎨 สีตัวถัง</h3>
+  <div class="row" id="colors"></div>
+  <h3>🔧 มุมมองชิ้นส่วน</h3>
+  <div class="row">
+    <button id="bDim" class="on">📏 มิติ</button>
+    <button id="bTags" class="on">🏷️ ชื่อชิ้นส่วน</button>
+    <button id="bChassis">🦴 โครง Unibody</button>
+    <button id="bLight">💡 ไฟหน้า</button>
+    <button id="bSpin">🌀 ล้อหมุน</button>
+    <button id="bAuto" class="on">🔁 หมุนรอบคัน</button>
+  </div>
+  <h3>💥 ระเบิดชิ้นส่วน (Exploded): <span id="exV">0%</span></h3>
+  <input type="range" id="ex" min="0" max="100" value="0">
+  <h3>📷 มุมกล้อง</h3>
+  <div class="row">
+    <button data-view="side">ด้านข้าง</button>
+    <button data-view="front">ด้านหน้า</button>
+    <button data-view="rear">ด้านหลัง</button>
+    <button data-view="top">ด้านบน</button>
+    <button data-view="iso">3/4</button>
+  </div>
+  <h3>📐 มิติมาตรฐาน (mm)</h3>
+  <table>
+    <tr><td>ยาวรวม</td><td>4,880</td></tr>
+    <tr><td>กว้าง (ไม่รวมกระจก)</td><td>1,840</td></tr>
+    <tr><td>สูง</td><td>1,445</td></tr>
+    <tr><td>ฐานล้อ WB</td><td>2,825</td></tr>
+    <tr><td>Track หน้า/หลัง</td><td>1,590 / 1,595</td></tr>
+    <tr><td>Front overhang</td><td>920</td></tr>
+    <tr><td>Rear overhang</td><td>1,135</td></tr>
+    <tr><td>Ground clearance</td><td>140</td></tr>
+    <tr><td>ล้อ</td><td>215/55R17 ⌀668</td></tr>
+    <tr><td>Beltline สูงจากพื้น</td><td>960</td></tr>
+    <tr><td>สัดส่วน WB/L</td><td>58%</td></tr>
+  </table>
+  <h3>🧩 โครงสร้างในโมเดล</h3>
+  <p style="opacity:.85">ตัวถังล่าง extrude ตาม side-profile จริง + เว้าซุ้มล้อ r400mm · เสา A/B/C + หลังคาแยกชิ้น · ประตู 4 บานมีร่อง + มือจับ · ไฟหน้า DRL + ไฟท้าย light-bar · ภายในมีแดชบอร์ด พวงมาลัยซ้าย เบาะ 5 ที่นั่ง · กด “โครง Unibody” เพื่อดู floor pan, side member, crush box, subframe, เสาโบรอน, เครื่องวางขวาง, สตรัทหน้า/มัลติลิงก์หลัง</p>
+</div>
+<div id="view"><canvas id="c"></canvas>
+<div id="hint">ลากหมุน · สกรอลล์ซูม · คลิกขวาลากเลื่อน · 1 unit = 1 เมตร</div>
+</div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { create } from './js/campfire-assets.js';
+import { SEDAN_DIM } from './js/models/sedan.js';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1720);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+
+const cam = new THREE.PerspectiveCamera(38, 2, 0.1, 100);
+const ctl = new OrbitControls(cam, canvas);
+ctl.target.set(-0.1, 0.65, 0);
+ctl.maxPolarAngle = Math.PI/2 + 0.05;
+
+scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x2a2118, 0.55));
+const sun = new THREE.DirectionalLight(0xfff2d9, 2.2);
+sun.position.set(5,8,4); sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-5; sun.shadow.camera.right=5; sun.shadow.camera.top=5; sun.shadow.camera.bottom=-5;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0x88aaff, 0.5); fill.position.set(-6,3,-5); scene.add(fill);
+
+// พื้น + กริดเมตร
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(30,30), new THREE.MeshStandardMaterial({color:0x18222c, roughness:1}));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(20, 20, 0xf2a65a, 0x334455);
+grid.position.y = 0.001; grid.material.transparent = true; grid.material.opacity = 0.5; scene.add(grid);
+// แท่นวางรถ 5.5 x 2.5m
+const pad = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.06, 2.6), new THREE.MeshStandardMaterial({color:0x223040, roughness:1}));
+pad.position.y = -0.031; pad.receiveShadow = true; scene.add(pad);
+
+// รถ + โครง
+let car = create('sedan', {color: 0x2e6f9e});
+scene.add(car);
+let chassis = create('sedan_chassis');
+chassis.visible = false;
+chassis.position.y = 0.001;
+scene.add(chassis);
+
+/* ----- เส้นมิติ ----- */
+function label(text, scale=1){
+  const c = document.createElement('canvas'); c.width=256; c.height=64;
+  const x = c.getContext('2d');
+  x.fillStyle = '#0f1720ee'; x.fillRect(0,0,256,64);
+  x.strokeStyle = '#f2a65a'; x.lineWidth = 4; x.strokeRect(2,2,252,60);
+  x.fillStyle = '#ffd9a0'; x.font = 'bold 30px Anuphan, sans-serif';
+  x.textAlign='center'; x.textBaseline='middle'; x.fillText(text,128,34);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map:t, depthTest:false}));
+  s.scale.set(0.9*scale, 0.225*scale, 1); return s;
+}
+function dimLine(a, b, text){
+  const grp = new THREE.Group();
+  const g = new THREE.BufferGeometry().setFromPoints([a,b]);
+  grp.add(new THREE.Line(g, new THREE.LineDashedMaterial({color:0xf2a65a, dashSize:0.08, gapSize:0.05})));
+  grp.children[0].computeLineDistances();
+  for(const p of [a,b]){
+    const tick = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.02,0.02), new THREE.MeshBasicMaterial({color:0xf2a65a}));
+    tick.position.copy(p); grp.add(tick);
+  }
+  const mid = a.clone().add(b).multiplyScalar(0.5);
+  const lb = label(text); lb.position.copy(mid).add(new THREE.Vector3(0,0.18,0)); grp.add(lb);
+  return grp;
+}
+const dims = new THREE.Group();
+dims.add(dimLine(new THREE.Vector3(SEDAN_DIM.rearBumperX,0.03,1.45), new THREE.Vector3(SEDAN_DIM.frontBumperX,0.03,1.45), 'ยาว 4,880 mm'));
+dims.add(dimLine(new THREE.Vector3(2.9,0.03,-0.92), new THREE.Vector3(2.9,0.03,0.92), 'กว้าง 1,840'));
+dims.add(dimLine(new THREE.Vector3(SEDAN_DIM.rearAxleX,0.03,-1.45), new THREE.Vector3(SEDAN_DIM.frontAxleX,0.03,-1.45), 'ฐานล้อ 2,825'));
+dims.add(dimLine(new THREE.Vector3(2.9,0,1.15), new THREE.Vector3(2.9,SEDAN_DIM.H,1.15), 'สูง 1,445'));
+scene.add(dims);
+
+/* ----- ป้ายชื่อชิ้นส่วน ----- */
+const tags = new THREE.Group();
+const tagDefs = [
+  [[1.40,1.02,0],'ฝากระโปรง'], [[-0.37,1.62,0],'หลังคา'],
+  [[0.42,1.28,0.78],'เสา A'], [[-0.48,1.28,0.78],'เสา B (โบรอน)'], [[-1.22,1.28,0.78],'เสา C'],
+  [[2.30,0.85,0.62],'ไฟหน้า+DRL'], [[-2.60,1.02,0],'ไฟท้าย Light-bar'],
+  [[0.62,1.22,1.02],'กระจกข้าง'], [[1.41,0.62,0.85],'ล้อ ⌀668'],
+  [[-2.58,0.32,0.45],'ท่อคู่'], [[-0.30,0.95,0.95],'มือจับ'], [[0.62,1.02,0.35],'ที่ปัดน้ำฝน'],
+];
+for(const [p,t] of tagDefs){ const s = label(t, 0.72); s.position.set(...p); tags.add(s); }
+scene.add(tags);
+
+/* ----- UI ----- */
+const COLORS = [[0x2e6f9e,'น้ำเงิน'],[0xe8e8e8,'ขาว'],[0x17181a,'ดำ'],[0xa02121,'แดง'],[0x8a8f96,'เทา'],[0x2e5f4a,'เขียว']];
+const colBox = document.getElementById('colors');
+COLORS.forEach(([c,n],i)=>{
+  const d = document.createElement('div'); d.className='sw'+(i===0?' on':''); d.title=n;
+  d.style.background='#'+c.toString(16).padStart(6,'0');
+  d.onclick=()=>{ document.querySelectorAll('.sw').forEach(e=>e.classList.remove('on')); d.classList.add('on'); car.userData.setColor(c); };
+  colBox.appendChild(d);
+});
+const tog = (id, fn)=>{ const b=document.getElementById(id); b.onclick=()=>{ b.classList.toggle('on'); fn(b.classList.contains('on')); }; };
+tog('bDim', on=>dims.visible=on);
+tog('bTags', on=>tags.visible=on);
+tog('bChassis', on=>{ chassis.visible=on; car.traverse(o=>{ if(o.material && o.material.transparent && o.material.opacity>0.6 && o.material.opacity<0.7) o.visible=!on; }); });
+tog('bLight', on=>car.userData.setHeadlights(on));
+tog('bSpin', on=>car.userData.moving=on);
+tog('bAuto', on=>ctl.autoRotate=on);
+ctl.autoRotate = true; ctl.autoRotateSpeed = 0.9;
+document.getElementById('ex').oninput=e=>{
+  const v = e.target.value/100;
+  document.getElementById('exV').textContent = e.target.value+'%';
+  car.userData.setExplode(v);
+};
+const VIEWS = {
+  side:[[ -0.1,0.8,6.2],[-0.1,0.65,0]], front:[[6.4,1.0,-0.1],[-0.1,0.65,0]],
+  rear:[[-6.6,1.1,0.2],[-0.1,0.65,0]], top:[[ -0.1,8.2,-0.1],[-0.1,0,0]],
+  iso:[[4.4,2.4,3.4],[-0.1,0.65,0]],
+};
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{
+  const [p,t]=VIEWS[b.dataset.view]; cam.position.set(...p); ctl.target.set(...t);
+});
+cam.position.set(...VIEWS.iso[0]); ctl.target.set(...VIEWS.iso[1]);
+
+function size(){ const w=innerWidth, wrap=document.getElementById('view'); const ww=wrap.clientWidth, hh=wrap.clientHeight; renderer.setSize(ww,hh,false); cam.aspect=ww/hh; cam.updateProjectionMatrix(); }
+addEventListener('resize', size); size();
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(()=>{
+  const dt = Math.min(0.05, clock.getDelta()), t = clock.elapsedTime;
+  try{ car.userData.update(t,dt); }catch(e){}
+  ctl.update(); renderer.render(scene,cam);
+});
+</script>
+</body>
+</html>

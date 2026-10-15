@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORGE 3D — Modular Models</title>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0e1012;color:#e6e9ec;font-family:Anuphan,sans-serif}
+header{padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#16191c;border-bottom:1px solid #282e34}
+button{background:#1c2024;color:#e6e9ec;border:1px solid #343b42;padding:8px 10px;cursor:pointer;border-radius:6px}
+button:hover{border-color:#8bff3d}canvas{display:block;width:100%;height:62vh;background:#0a0c0e}
+#info{padding:8px 16px;color:#8a939b;font-size:13px}.accent{color:#8bff3d}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<header><b>🧊 FORGE 3D <span class="accent">modular</span></b>
+<a href="../index.html" style="color:#8bff3d">← กลับเกม</a>
+<span id="name"></span></header>
+<div style="padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap" id="grid"></div>
+<canvas id="v"></canvas>
+<p id="info">โมเดลแยกเป็นหลายไฟล์ใน <code>forge/js/models/</code> — core / trees / nature / vehicles / arch — สร้างอิงโครงสร้างจริง (ลำต้น-เรือนยอด, ตัวถัง-ช่วงล่าง, ผนัง 0.15m ประตู 0.9×2.1m)</p>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { buildTree, buildFoliage, buildRock, buildTerrain, buildVehicle, buildProp, makeModular } from './js/models/index.js';
+const canvas=document.getElementById('v'), grid=document.getElementById('grid'), nameEl=document.getElementById('name');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.shadowMap.enabled=true;
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0e1012);
+const cam=new THREE.PerspectiveCamera(45,2,0.1,200); cam.position.set(5,4,6);
+const ctl=new OrbitControls(cam,canvas); ctl.target.set(0,1,0);
+scene.add(new THREE.HemisphereLight(0xbfd4ff,0x2a2a30,0.8));
+const sun=new THREE.DirectionalLight(0xffffff,1.4); sun.position.set(8,14,6); sun.castShadow=true; scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:0x1a1e22,roughness:1}));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+scene.add(new THREE.GridHelper(20,20,0x42d9ff,0x2a3036));
+let cur=null;
+const demos=[
+  ['tree-round',()=>buildTree('round',4,1.6,3,0x4a8f3a)],
+  ['tree-cone',()=>buildTree('cone',4.5,1.4,4,0x2f6b2f)],
+  ['tree-palm',()=>buildTree('palm',4,1.6,3,0x4a8f3a)],
+  ['tree-bush',()=>buildTree('bush',1.2,1.4,4,0x4a8f3a)],
+  ['grass',()=>buildFoliage('grass',10,0.5,0x5fa83a)],
+  ['flower',()=>buildFoliage('flower',8,0.4,0x5fa83a)],
+  ['fern',()=>buildFoliage('fern',8,0.5,0x3f7a3a)],
+  ['rock',()=>buildRock(0.8,0.5)],
+  ['terrain',()=>buildTerrain(8)],
+  ['wall',()=>makeModular('wall',3)],
+  ['door',()=>makeModular('door',3)],
+  ['window',()=>makeModular('window',3)],
+  ['stairs',()=>makeModular('stairs',2)],
+  ['car',()=>buildVehicle('car',4.5,1.8,1.5,0.35,0xcc3333)],
+  ['suv',()=>buildVehicle('suv',4.6,1.9,1.9,0.38,0x3a6a9a)],
+  ['truck',()=>buildVehicle('truck',7,2.2,2.4,0.45,0x8a8f96)],
+  ['bike',()=>buildVehicle('bike',1.8,0.6,1.0,0.33,0xcc3333)],
+  ['boat',()=>buildVehicle('boat',5,1.8,1.2,0.3,0x8a6238)],
+  ['crate',()=>buildProp('crate')],
+  ['barrel',()=>buildProp('barrel')],
+  ['lamp',()=>buildProp('lamp')],
+  ['fence',()=>buildProp('fence')],
+  ['bench',()=>buildProp('bench')],
+  ['sign',()=>buildProp('sign')],
+];
+function show(i){
+  if(cur) scene.remove(cur);
+  cur=demos[i][1](); scene.add(cur); nameEl.textContent='— '+demos[i][0];
+  document.querySelectorAll('#grid button').forEach((b,j)=>b.style.borderColor=j===i?'#8bff3d':'');
+}
+demos.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d[0];b.onclick=()=>show(i);grid.appendChild(b);});
+function size(){const w=innerWidth,h=innerHeight*0.62;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+addEventListener('resize',size); size(); show(0);
+renderer.setAnimationLoop(()=>{ctl.update();renderer.render(scene,cam);});
+</script></body></html>

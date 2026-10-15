@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Campfire Diorama — Craft. Farm. Survive.</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230F1720'/><text y='24' font-size='22'>🔥</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Anuphan:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+"three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+  <div id="vign"></div>
+
+  <div id="loading">
+    <div class="load-box">
+      <div class="fire">🔥</div>
+      <div class="pixel" style="color:#F2A65A">CAMPFIRE DIORAMA</div>
+      <div class="load-bar"><i id="loadV"></i></div>
+      <div id="loadT" style="font-size:13px;opacity:.8">ก่อไฟ…</div>
+    </div>
+  </div>
+
+  <div id="hero">
+    <div class="hero-card">
+      <p class="pixel logo">⛺ CAMPFIRE<br>DIORAMA</p>
+      <p class="tag"><b>Craft. Farm. Survive.</b><small>คืนนี้หนาว ก่อไฟก่อน — สร้างค่ายของคุณในป่า pixel</small></p>
+      <div class="btnrow">
+        <button class="btn main pixel" id="playBtn">▶ เล่นเลย</button>
+        <button class="btn" id="howBtn">📖 วิธีเล่น</button>
+        <button class="btn" id="viewBtn">🧊 ดู Asset</button>
+      </div>
+      <div class="feats">
+        <div class="feat"><b>🪓</b>คราฟต์</div>
+        <div class="feat"><b>🌱</b>ฟาร์ม</div>
+        <div class="feat"><b>🌲</b>ตัดไม้</div>
+        <div class="feat"><b>⛏️</b>เก็บของ</div>
+        <div class="feat"><b>💨</b>สไลด์</div>
+      </div>
+      <p id="how" style="display:none;font-size:13px;text-align:left;background:#1d150e;border:2px solid #4a3220;padding:10px">
+      <b>เป้าหมาย:</b> เอาชีวิตรอด 5 คืน รักษาไฟแคมป์ให้ติด 🔥<br>
+      <b>เดิน:</b> <kbd>WASD</kbd>/ลูกศร/จอย · <b>เก็บ/ปลูก/เติมฟืน:</b> <kbd>E</kbd> ·
+      <b>ตี/ล่า:</b> <kbd>J</kbd>/คลิก · <b>สไลด์:</b> <kbd>Space</kbd> · <b>กิน:</b> <kbd>F</kbd> ·
+      <b>ช่องเก็บของ:</b> <kbd>Tab</kbd>/<kbd>I</kbd> · <b>คราฟต์:</b> <kbd>C</kbd><br>
+      กลางคืนจะหนาวและมีหมาป่า 🐺 อยู่ใกล้ไฟจะอุ่น ตัดไม้ ขุดหิน เก็บเบอร์รี่ ปลูกผักในแปลง
+      เอาไม้เติมไฟ คราฟต์ดาบแล้วสู้!</p>
+    </div>
+  </div>
+
+  <div id="hud" class="hide">
+    <div class="topbar">
+      <div class="stats">
+        <div class="stat">❤️ <div class="bar"><i id="hpV"></i></div></div>
+        <div class="stat">⚡ <div class="bar"><i id="stV"></i></div></div>
+        <div class="stat">🍖 <div class="bar"><i id="huV"></i></div></div>
+        <div class="stat">🔥 <div class="bar"><i id="waV"></i></div></div>
+        <div class="stat pixel" id="invSum" style="font-size:11px">🪵0 🪨0 🫐0</div>
+      </div>
+      <div class="daybox">
+        <div class="pixel" id="dayT">DAY 1</div>
+        <div class="pixel" id="clock">☀️</div>
+        <div style="font-size:11px" id="fireT">ฟืน 100%</div>
+      </div>
+      <canvas id="minimap" width="128" height="128"></canvas>
+    </div>
+    <div id="toast"></div>
+    <div id="prompt"></div>
+    <div id="hotbar"></div>
+    <div id="fileBtns">
+      <button class="abtn" id="bInv" title="กระเป๋า (I)">🎒</button>
+      <button class="abtn" id="bCraft" title="คราฟต์ (C)">🛠️</button>
+      <button class="abtn" id="bAtk" title="โจมตี (J)">⚔️</button>
+      <button class="abtn" id="bEat" title="กิน (F)">🍖</button>
+    </div>
+    <div id="joy"><div id="stick"></div></div>
+    <div id="actBtns">
+      <button class="abtn" id="mAct">✋</button>
+      <button class="abtn" id="mSlide">💨</button>
+      <button class="abtn" id="mAtk">⚔️</button>
+    </div>
+    <div id="help"><kbd>WASD</kbd> เดิน · <kbd>E</kbd> เก็บ/โต้ตอบ · <kbd>J</kbd> ตี · <kbd>Space</kbd> สไลด์ · <kbd>F</kbd> กิน · <kbd>C</kbd> คราฟต์</div>
+  </div>
+
+  <div class="panel" id="invPanel">
+    <header><b>🎒 กล่องไม้ — Inventory</b><button class="xbtn" data-x="invPanel">✕</button></header>
+    <div class="body"><div class="invgrid" id="invGrid"></div>
+    <p style="font-size:12px;opacity:.8">คลิกอาหารเพื่อกิน · ไม้เอาไว้เติมฟืน/คราฟต์ · เมล็ดปลูกในแปลง (E)</p></div>
+  </div>
+  <div class="panel" id="craftPanel">
+    <header><b>🛠️ Blueprint — คราฟต์</b><button class="xbtn" data-x="craftPanel">✕</button></header>
+    <div class="body" id="craftList"></div>
+  </div>
+
+  <div id="over"><div class="over-card">
+    <h2 class="pixel" id="overTitle">คืนที่ 5 รอดแล้ว!</h2>
+    <p id="overSub"></p>
+    <button class="btn main" id="againBtn">🔁 เล่นใหม่</button>
+  </div></div>
+</div>
+<script type="module" src="js/game.js"></script>
+</body>
+</html>

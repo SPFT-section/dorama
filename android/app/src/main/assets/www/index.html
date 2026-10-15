@@ -1,0 +1,1219 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LUMEN Writing Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: black glass studio. Top bar + sub-nav (ปก / เรื่อง / บท / เขียน / อ่าน) over six full-height views; covers carry all the colour. */
+:root{
+  --bg:#070707; --bg-2:#0e0e0e; --ink:#f2f2ef; --ink-2:#b6b6b1; --ink-3:#7d7d78; --ink-4:#4b4b48;
+  --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.18); --line-focus:rgba(255,255,255,.3);
+  --glass:linear-gradient(135deg,rgba(26,26,26,.82),rgba(10,10,10,.68));
+  --fill:rgba(255,255,255,.045); --fill-2:rgba(255,255,255,.09);
+  --ok:#8fd0a4; --warn:#e0c07a; --mute:#9aa0a6;
+  --font-ui:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-serif:"Noto Serif Thai",Georgia,"Times New Roman",serif;
+  --font-display:"Cormorant Garamond","Noto Serif Thai",Georgia,serif;
+  --gx:max(16px,env(safe-area-inset-left,0px)); --gx-r:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+*::-webkit-scrollbar{width:8px;height:8px}*::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border:2px solid transparent;background-clip:padding-box;border-radius:999px}
+html,body{height:100%}
+body{margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:14px;
+  background-image:radial-gradient(circle at 15% 0%,rgba(255,255,255,.04),transparent 30%),radial-gradient(circle at 90% 80%,rgba(255,255,255,.025),transparent 34%)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{opacity:.38;cursor:not-allowed}
+:focus-visible{outline:1px solid var(--line-focus);outline-offset:2px}
+::selection{background:rgba(255,255,255,.2)}
+.icon{width:18px;height:18px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.app{height:100%;display:flex;flex-direction:column}
+.glass{background:var(--glass);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.5);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+
+/* top bar */
+.topbar{flex:0 0 auto;min-height:64px;display:flex;align-items:center;gap:14px;padding:0 var(--gx-r) 0 var(--gx);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(8,8,8,.8),rgba(8,8,8,.5));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);z-index:30}
+.brand{display:flex;align-items:center;gap:11px;border:0;background:transparent;letter-spacing:.3em;font-size:14px;font-weight:600;padding:6px 4px;border-radius:10px}
+.brand:hover{background:var(--fill)}
+.brandmark{width:26px;height:26px}
+.crumb{min-width:0;max-width:34vw;border:1px solid transparent;background:transparent;border-radius:10px;padding:7px 10px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-serif)}
+.crumb:hover{background:var(--fill);border-color:var(--line);color:var(--ink)}
+.sep{width:1px;height:22px;background:var(--line);flex:0 0 auto}
+.spacer{flex:1}
+.save{display:flex;align-items:center;gap:8px;color:var(--ink-3);font-size:12px;white-space:nowrap}
+.dot{width:6px;height:6px;border-radius:50%;background:#eee;box-shadow:0 0 10px rgba(255,255,255,.55)}
+.icon-btn{width:38px;height:38px;flex:0 0 auto;border:1px solid transparent;border-radius:12px;background:transparent;display:grid;place-items:center;color:var(--ink-2);transition:.18s ease}
+.icon-btn:hover{background:var(--fill-2);border-color:var(--line);color:#fff}
+.icon-btn:active,.btn:active{transform:translateY(1px)}
+
+/* sub navigation */
+.subnav{flex:0 0 auto;border-bottom:1px solid var(--line);padding:0 var(--gx-r) 0 var(--gx);overflow-x:auto;z-index:29;background:rgba(7,7,7,.6)}
+.tabs{display:flex;gap:4px;width:max-content;margin:0 auto;padding:8px 0}
+.tab{border:1px solid transparent;background:transparent;color:var(--ink-3);padding:7px 16px;border-radius:999px;font-size:13px;letter-spacing:.02em;transition:.18s ease}
+.tab:hover{color:var(--ink);background:var(--fill)}
+.tab.on{color:#0b0b0b;background:#efefec;border-color:#fff}
+
+/* shared controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--fill);color:var(--ink);transition:.18s ease;white-space:nowrap}
+.btn:hover{background:var(--fill-2);border-color:var(--line-2)}
+.btn.primary{background:#f0f0ed;color:#0b0b0b;border-color:#fff;font-weight:500}
+.btn.primary:hover{background:#fff}
+.btn.ghost{background:transparent}
+.btn.warn{color:#ff9b9b;border-color:rgba(255,107,107,.25);background:transparent}
+.btn.warn:hover{background:rgba(255,107,107,.08)}
+.btn.sm{height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.eyebrow{margin:0 0 8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field>label,.label{font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+.input,.select,.area{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.35);padding:11px 13px;outline:none;transition:.18s ease;color:var(--ink)}
+.input:focus,.select:focus,.area:focus{border-color:var(--line-2);box-shadow:0 0 0 3px rgba(255,255,255,.03)}
+.input::placeholder,.area::placeholder{color:var(--ink-4)}
+.area{resize:vertical;line-height:1.8;font-family:var(--font-serif);font-size:15px}
+.select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#888 50%),linear-gradient(135deg,#888 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2)}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-writing{color:var(--warn)}.st-done{color:var(--ok)}.st-paused{color:var(--mute)}
+
+/* views */
+.main{position:relative;flex:1;min-height:0}
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden}
+.wrap{width:min(100%,1040px);margin:0 auto;padding:34px var(--gx-r) 70px var(--gx)}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:28px}
+.page-title{margin:0;font-family:var(--font-serif);font-weight:400;font-size:clamp(26px,5vw,38px);line-height:1.3;text-wrap:balance}
+.page-sub{margin:6px 0 0;color:var(--ink-3);font-size:13px}
+
+/* covers */
+.cover{position:relative;aspect-ratio:2/3;width:100%;max-width:100%;border-radius:5px 12px 12px 5px;overflow:hidden;container-type:inline-size;isolation:isolate;background:#111;color:#fff;box-shadow:0 28px 55px -22px rgba(0,0,0,.8),inset 3px 0 0 rgba(255,255,255,.09)}
+.cover::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),transparent 6%,transparent 94%,rgba(255,255,255,.04))}
+.c-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center}
+.c-in{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:space-between;padding:12cqw 11cqw 10cqw}
+.c-title{font-family:var(--font-display);font-weight:600;font-size:12.5cqw;line-height:1.22;text-wrap:balance;overflow-wrap:anywhere}
+.c-tag{margin:3.5cqw 0 0;font-size:4.2cqw;line-height:1.6;color:rgba(255,255,255,.72)}
+.c-author{font-size:3.8cqw;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.78);min-height:1em;overflow-wrap:anywhere}
+.cv-aurora .c-bg{background:radial-gradient(120% 70% at 18% 0%,hsl(var(--h) 72% 40%/.95),transparent 62%),radial-gradient(95% 60% at 92% 100%,hsl(calc(var(--h) + 55) 70% 30%/.9),transparent 64%),#09090b}
+.cv-moon .c-bg{background:radial-gradient(circle at 50% 34%,hsl(var(--h) 25% 94%) 0 10.5%,hsl(var(--h) 60% 62%/.4) 11.5%,transparent 31%),linear-gradient(180deg,hsl(var(--h) 45% 13%),#050507 76%)}
+.cv-lines .c-bg{background:repeating-linear-gradient(90deg,hsl(var(--h) 45% 65%/.17) 0 1px,transparent 1px 6.5cqw),linear-gradient(160deg,hsl(var(--h) 55% 22%),#06060a 72%)}
+.cv-frame .c-bg{background:#0b0b0b}
+.cv-frame .c-bg::before,.cv-frame .c-bg::after{content:"";position:absolute;border:1px solid hsl(var(--h) 35% 72%/.55)}
+.cv-frame .c-bg::before{inset:5cqw}.cv-frame .c-bg::after{inset:6.6cqw;opacity:.5}
+.cv-frame .c-in{text-align:center;align-items:center;padding:16cqw 14cqw 13cqw}
+.cv-image .c-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.05) 40%,rgba(0,0,0,.7))}
+
+/* home */
+.home-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search{height:40px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--fill);color:var(--ink-3);min-width:0}
+.search:focus-within{border-color:var(--line-2)}
+.search input{min-width:0;width:100%;border:0;outline:0;background:transparent;font-size:13px}
+.search input::placeholder{color:var(--ink-4)}
+.resume{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 20px;border-radius:18px;margin-bottom:34px}
+.resume-t{font-family:var(--font-serif);font-size:18px;overflow-wrap:anywhere}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:34px 24px;align-items:start}
+.book{display:flex;flex-direction:column;gap:12px;min-width:0}
+.book-cover{padding:0;border:0;background:transparent;border-radius:12px;transition:transform .25s ease}
+.book-cover:hover{transform:translateY(-5px) rotate(-.4deg)}
+.book-title{font-family:var(--font-serif);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.book-sub{font-size:12px;color:var(--ink-3);margin:3px 0 8px}
+.book-act{display:flex;gap:6px;margin-top:10px}
+.empty{grid-column:1/-1;border:1px dashed var(--line-2);border-radius:20px;padding:54px 24px;text-align:center;color:var(--ink-3);display:flex;flex-direction:column;align-items:center;gap:14px}
+.empty strong{font-family:var(--font-serif);font-weight:400;font-size:22px;color:var(--ink)}
+
+/* cover page */
+.cover-grid{display:grid;grid-template-columns:minmax(220px,320px) minmax(0,1fr);gap:48px;align-items:start}
+.cover-stage{display:flex;flex-direction:column;gap:18px}
+.cover-form{display:flex;flex-direction:column;gap:20px}
+.styles{display:flex;gap:12px;flex-wrap:wrap}
+.style-opt{width:70px;padding:0;border:2px solid transparent;border-radius:10px;background:transparent;transition:.18s ease}
+.style-opt.on{border-color:#fff}
+.style-opt .cover{box-shadow:none;pointer-events:none}
+.style-opt .c-in{padding:10cqw 9cqw}.style-opt .c-title{font-size:15cqw}.style-opt .c-tag,.style-opt .c-author{display:none}
+.range{width:100%;accent-color:#fff}
+.hue-track{height:8px;border-radius:99px;background:linear-gradient(90deg,hsl(0 70% 50%),hsl(60 70% 50%),hsl(120 70% 45%),hsl(180 70% 45%),hsl(240 70% 55%),hsl(300 70% 50%),hsl(360 70% 50%));margin-bottom:-14px;opacity:.85}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* story page */
+.story-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:18px;background:var(--fill);padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.stat{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--ink-3)}
+.stat b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+.bar{height:6px;border-radius:99px;background:var(--fill-2);overflow:hidden}
+.bar>i{display:block;height:100%;background:#eee;border-radius:99px;transition:width .3s ease}
+.chip-list{display:flex;flex-direction:column;gap:6px}
+.chip{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);text-align:left;width:100%}
+.chip:hover{border-color:var(--line-2)}
+.avatar{width:30px;height:30px;flex:0 0 30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,#222,#111);border:1px solid var(--line-2);font-size:13px}
+.chip span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* chapters */
+.ch-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.ch-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border-top:1px solid var(--line);background:var(--fill);transition:background .18s}
+.ch-row:first-child{border-top:0}
+.ch-row:hover{background:var(--fill-2)}
+.ch-no{font-family:var(--font-display);font-size:26px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ch-main{min-width:0}
+.ch-name{border:0;background:transparent;padding:0;text-align:left;font-family:var(--font-serif);font-size:17px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.ch-name.none{color:var(--ink-4)}
+.ch-meta{font-size:12px;color:var(--ink-3);margin-top:4px;font-variant-numeric:tabular-nums}
+.ch-acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.ch-acts .btn{height:30px;padding:0 11px;font-size:12px;border-radius:9px}
+.ch-acts .icon-btn{width:30px;height:30px;border-radius:9px;font-size:13px}
+
+/* write */
+#v-write{overflow:hidden}
+.toolbar{position:absolute;z-index:4;top:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px;padding:7px 9px;border-radius:999px;white-space:nowrap;max-width:calc(100% - 24px);overflow-x:auto}
+.tool{width:34px;height:34px;flex:0 0 auto;border:0;background:transparent;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);font-size:14px;transition:.18s}
+.tool:hover{background:var(--fill-2);color:#fff}
+.tool strong{font-size:15px}.tool em{font-family:Georgia,serif;font-size:16px}
+.tool-sep{width:1px;height:20px;background:var(--line);margin:0 5px;flex:0 0 auto}
+.editor-scroll{position:absolute;inset:0;overflow:auto;padding:104px var(--gx-r) 150px var(--gx)}
+.document{width:min(100%,760px);margin:0 auto;caret-color:#fff}
+.chapter-no{text-align:center;color:var(--ink-3);font-size:13px;letter-spacing:.2em;margin:18px 0}
+.chapter-title{text-align:center;font-family:var(--font-serif);font-size:clamp(26px,5vw,36px);line-height:1.4;font-weight:400;margin:0 0 50px;outline:none;min-height:1.4em;overflow-wrap:anywhere}
+.chapter-title:empty:before{content:"ชื่อบท…";color:var(--ink-4)}
+.prose{font-family:var(--font-serif);font-size:20px;line-height:2.05;color:#e9e9e6;outline:none;min-height:40vh}
+.prose p{margin:0 0 24px}
+.prose blockquote{margin:0 0 24px;padding-left:18px;border-left:2px solid var(--line-2);color:var(--ink-2)}
+.prose:empty:before{content:"เริ่มเขียนเรื่องของคุณที่นี่…";color:var(--ink-4);pointer-events:none}
+.chapter-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:50px;padding-top:24px;border-top:1px solid var(--line)}
+.statusbar{position:absolute;z-index:5;left:var(--gx);right:var(--gx-r);bottom:16px;height:58px;border-radius:20px;display:flex;align-items:center;padding:0 14px 0 18px;gap:18px}
+.status-group{display:flex;align-items:center;gap:8px;color:var(--ink-3);font-size:13px;white-space:nowrap}
+.status-group strong{color:#ddd;font-weight:500;font-variant-numeric:tabular-nums}
+.status-sep{color:var(--ink-4)}
+.pick{border:1px solid var(--line);background:var(--fill);border-radius:999px;padding:7px 14px;color:var(--ink-2);font-size:13px;white-space:nowrap}
+.pick:hover{background:var(--fill-2);color:#fff}
+.focus-btn{height:38px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:var(--fill);display:flex;align-items:center;gap:8px}
+.focus-btn:hover{background:var(--fill-2)}
+.floating{position:absolute;z-index:20;right:var(--gx-r);bottom:86px;width:200px;padding:10px;border-radius:16px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s ease}
+.floating.show{opacity:1;transform:none;pointer-events:auto}
+.floating button{width:100%;padding:10px 11px;border:0;border-radius:10px;background:transparent;text-align:left;color:var(--ink-2)}
+.floating button:hover{background:var(--fill-2);color:#fff}
+.focus .topbar,.focus .subnav,.focus .toolbar,.focus .statusbar{opacity:0;pointer-events:none}
+.focus .topbar,.focus .subnav{position:absolute;left:0;right:0}
+.focus-exit{display:none;position:fixed;z-index:70;top:calc(14px + env(safe-area-inset-top,0px));right:var(--gx-r);height:38px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--glass);backdrop-filter:blur(18px);align-items:center;gap:7px;color:var(--ink-2)}
+.focus .focus-exit{display:flex}
+
+/* reader */
+#v-read{overflow:hidden;--r-size:19px;background:var(--r-bg);color:var(--r-ink);transition:background .3s ease,color .3s ease}
+#v-read[data-rt="dark"]{--r-bg:#0a0a0a;--r-ink:#d8d8d4;--r-mut:#78786f;--r-line:rgba(255,255,255,.1);--r-bar:rgba(10,10,10,.85)}
+#v-read[data-rt="sepia"]{--r-bg:#ece1cb;--r-ink:#3a2e20;--r-mut:#8a7a62;--r-line:rgba(58,46,32,.16);--r-bar:rgba(236,225,203,.88)}
+#v-read[data-rt="paper"]{--r-bg:#f8f8f5;--r-ink:#1b1b1a;--r-mut:#7a7a74;--r-line:rgba(0,0,0,.1);--r-bar:rgba(248,248,245,.88)}
+.rbar{position:absolute;z-index:6;top:0;left:0;right:0;display:flex;align-items:center;gap:8px;padding:8px var(--gx-r) 8px var(--gx);background:var(--r-bar);border-bottom:1px solid var(--r-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.rbar .rbtn{height:34px;padding:0 12px;border:1px solid var(--r-line);border-radius:10px;background:transparent;color:var(--r-ink);font-size:13px;white-space:nowrap;min-width:34px}
+.rbar .rbtn:hover{background:var(--r-line)}
+.rbar .rbtn.on{background:var(--r-ink);color:var(--r-bg)}
+.rbar .rtitle{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--r-mut);font-size:13px;font-family:var(--font-serif)}
+.rprog{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent}
+.rprog i{display:block;height:100%;background:var(--r-ink);transform-origin:left;transform:scaleX(0)}
+.rscroll{position:absolute;inset:0;overflow:auto;padding:84px var(--gx-r) 90px var(--gx)}
+.rpage{width:min(100%,38em);margin:0 auto;font-family:var(--font-serif);font-size:var(--r-size)}
+.r-no{text-align:center;color:var(--r-mut);font-size:.7em;letter-spacing:.3em;margin:30px 0 14px}
+.r-title{text-align:center;font-weight:400;font-size:1.9em;line-height:1.4;margin:0 0 2.2em;overflow-wrap:anywhere}
+.r-body{line-height:2.1}
+.r-body p{margin:0 0 1.15em;text-indent:1.6em}
+.r-body blockquote{margin:0 0 1.2em;padding-left:1em;border-left:2px solid var(--r-line);color:var(--r-mut)}
+.r-body h1,.r-body h2{font-weight:500;text-align:center;margin:1.6em 0 1em}
+.r-foot{display:flex;justify-content:space-between;gap:12px;margin-top:4em;padding-top:1.6em;border-top:1px solid var(--r-line);flex-wrap:wrap}
+.r-foot .rbtn{height:40px;padding:0 18px;border:1px solid var(--r-line);border-radius:12px;background:transparent;color:var(--r-ink)}
+.r-foot .rbtn:hover{background:var(--r-line)}
+.r-empty{text-align:center;color:var(--r-mut);padding:60px 0}
+
+/* characters window */
+.character-window{position:fixed;z-index:60;left:50%;top:50%;width:min(920px,calc(100vw - 24px));height:min(680px,calc(100vh - 80px));transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;border-radius:26px;overflow:hidden;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
+.character-window.open{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.cw-head{height:62px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line);cursor:move;user-select:none;touch-action:none}
+.cw-title{font-size:15px;font-weight:600;flex:1}
+.cw-body{height:calc(100% - 62px);display:grid;grid-template-columns:260px 1fr;min-height:0}
+.cw-list{border-right:1px solid var(--line);padding:14px;overflow:auto;background:rgba(0,0,0,.12)}
+.cw-edit{padding:22px;overflow:auto}
+.cw-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.cw-avatar{width:68px;height:68px;flex:0 0 68px;border-radius:20px;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#292929,#111 70%);border:1px solid var(--line-2);font-size:24px}
+.cw-name{width:100%;font-size:24px;font-weight:600;background:transparent;border:0;border-bottom:1px solid transparent;outline:0;padding:6px 0}
+.cw-name:focus{border-bottom-color:var(--line-2)}
+.cw-role{width:100%;font-size:13px;background:transparent;border:0;outline:0;color:var(--ink-3);padding:4px 0}
+.cw-free{width:100%;min-height:360px;resize:vertical;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:18px;color:#e9e9e6;outline:0;padding:18px;font:16px/1.8 var(--font-serif)}
+.cw-free:focus{border-color:var(--line-2)}
+.cw-hint{font-size:11px;color:var(--ink-4);margin:9px 2px 0}
+.cw-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.cw-empty{padding:24px 10px;text-align:center;color:var(--ink-3);font-size:12px;line-height:1.7;border:1px dashed var(--line);border-radius:14px;margin-top:8px}
+.cw-item{display:flex;align-items:center;gap:10px;padding:9px;border-radius:14px;border:1px solid transparent;cursor:pointer;margin-bottom:4px}
+.cw-item:hover,.cw-item.active{background:var(--fill-2);border-color:var(--line)}
+.cw-item.active{box-shadow:inset 2px 0 0 rgba(255,255,255,.7)}
+.cw-item .nm{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cw-item .rl{font-size:11px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.backdrop{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.4);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:.18s}
+.backdrop.open{opacity:1;pointer-events:auto}
+
+/* modals, menu, toast */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-backdrop.open{display:flex}
+.modal{width:min(520px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:24px;border-radius:22px;background:linear-gradient(135deg,rgba(25,25,25,.94),rgba(8,8,8,.9))}
+.modal h2{margin:0 0 8px;font-size:18px;font-weight:600}
+.modal p{margin:0 0 6px;color:var(--ink-3);font-size:13px;line-height:1.6}
+.modal .input{margin:8px 0}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0;border-top:1px solid var(--line)}
+.srow:first-of-type{border-top:0}
+.srow strong{display:block;font-size:14px;font-weight:500}.srow span.d{display:block;color:var(--ink-3);font-size:12px;margin-top:4px;line-height:1.5}
+.results{display:flex;flex-direction:column;gap:4px;margin-top:10px;max-height:46vh;overflow:auto}
+.res{text-align:left;border:1px solid transparent;border-radius:12px;background:transparent;padding:10px 12px}
+.res:hover{background:var(--fill-2);border-color:var(--line)}
+.res b{display:block;font-weight:500;font-size:13px}.res span{display:block;font-size:12px;color:var(--ink-3);margin-top:3px;font-family:var(--font-serif);overflow-wrap:anywhere}
+.res mark{background:rgba(255,255,255,.2);color:#fff;border-radius:3px}
+.action-menu{position:fixed;z-index:90;min-width:220px;max-width:calc(100vw - 16px);max-height:60vh;overflow:auto;padding:7px;border:1px solid var(--line);border-radius:16px;background:rgba(14,14,14,.94);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.55);display:none}
+.action-menu.open{display:block}
+.action-menu button{width:100%;display:block;border:1px solid transparent;background:transparent;padding:10px 12px;border-radius:11px;text-align:left;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.action-menu button:hover{background:var(--fill-2);color:#fff}
+.action-menu button.on{color:#fff;background:var(--fill)}
+.action-menu button.danger{color:#ff9b9b}
+.menu-sep{height:1px;background:var(--line);margin:6px 4px}
+.toast{position:fixed;z-index:100;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:12px;background:#171717;border:1px solid var(--line-2);color:#ddd;font-size:13px;transition:.2s;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:820px){
+  .cover-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+  .cover-stage{max-width:300px;margin:0 auto;width:100%}
+  .story-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+  .cw-body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr}
+  .cw-list{max-height:180px;border-right:0;border-bottom:1px solid var(--line)}
+  .cw-edit{padding:16px}.cw-free{min-height:260px}
+  .character-window{height:calc(100vh - 60px)}
+}
+@media(max-width:640px){
+  .topbar{gap:6px;min-height:58px}.brand span{display:none}.save{display:none}.crumb{max-width:36vw}
+  .tabs{margin:0}
+  .editor-scroll{padding-top:92px}.prose{font-size:18px;line-height:1.95}
+  .statusbar{bottom:10px;gap:10px;padding:0 10px 0 14px}
+  .status-group.hide-s{display:none}
+  .ch-row{grid-template-columns:44px minmax(0,1fr);}
+  .ch-acts{grid-column:1/-1;justify-content:flex-start}
+  .ch-no{font-size:22px}
+  .rbar .hide-s{display:none}
+  .page-head{margin-bottom:20px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* LUMEN archive / hybrid knowledge management */
+.data-wrap{width:min(100%,1320px)}.data-layout{display:grid;grid-template-columns:190px minmax(260px,1fr) minmax(300px,.95fr);gap:16px;align-items:start}.data-categories{position:sticky;top:12px;padding:14px}.data-cat-list{display:flex;flex-direction:column;gap:5px}.data-cat{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;border:1px solid transparent;background:transparent;color:var(--ink-2);border-radius:10px;padding:10px;font-size:13px}.data-cat:hover,.data-cat.on{background:var(--fill-2);border-color:var(--line);color:var(--ink)}.data-cat small{color:var(--ink-4)}.data-divider{height:1px;background:var(--line);margin:12px 0}.data-main{min-width:0}.data-tools{display:flex;gap:8px;margin-bottom:12px}.data-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.data-list.layout-list{grid-template-columns:1fr}.data-card{min-width:0;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(18px);border-radius:14px;padding:14px;text-align:left;cursor:pointer;transition:.18s}.data-card:hover,.data-card.active{border-color:var(--line-2);background:var(--fill-2)}.data-card-top{display:flex;gap:10px;align-items:flex-start}.data-card-icon{width:36px;height:36px;flex:0 0 36px;border-radius:11px;border:1px solid var(--line-2);background:var(--fill-2);display:grid;place-items:center;font-size:17px}.data-card h3{font-size:14px;font-weight:500;margin:1px 0 4px;overflow-wrap:anywhere}.data-card p{font-size:12px;line-height:1.65;color:var(--ink-3);margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.data-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.data-tag{font-size:10px;color:var(--ink-3);border:1px solid var(--line);padding:2px 7px;border-radius:999px}.data-detail{position:sticky;top:12px;min-height:330px;padding:18px}.data-detail-empty{min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;color:var(--ink-2)}.data-empty-mark{font-family:var(--font-display);font-size:42px;color:var(--ink-3)}.data-detail h2{font-family:var(--font-serif);font-weight:400;font-size:23px;margin:0}.data-detail-form{display:flex;flex-direction:column;gap:13px}.data-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.data-detail-actions{display:flex;gap:7px;flex-wrap:wrap}.data-body{min-height:210px}.data-links{display:flex;flex-wrap:wrap;gap:6px}.data-link{font-size:12px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--fill)}.data-empty{grid-column:1/-1;border:1px dashed var(--line-2);border-radius:14px;padding:28px 16px;text-align:center;color:var(--ink-3);line-height:1.8}.cover-mode-active{border-color:#fff!important;background:#eee!important;color:#090909!important}.cv-editorial .c-in{justify-content:center;text-align:center;align-items:center}.cv-editorial .c-title{font-size:13cqw;letter-spacing:.035em}.cv-editorial .c-tag{max-width:85%;border-top:1px solid rgba(255,255,255,.4);padding-top:5cqw}.cv-cinematic .c-in{justify-content:space-between;text-align:left;align-items:flex-start}.cv-cinematic .c-title{text-shadow:0 2px 16px #000}.cv-cinematic .c-bg{background-position:center}
+@media(max-width:1000px){.data-layout{grid-template-columns:155px minmax(0,1fr)}.data-detail{grid-column:2;position:static}.data-categories{grid-row:span 2}}
+@media(max-width:650px){.data-layout{grid-template-columns:1fr}.data-categories{position:static}.data-cat-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.data-detail{grid-column:auto}.data-list{grid-template-columns:1fr}.data-tools{flex-wrap:wrap}.data-tools .select{flex:0 0 125px}.cover-grid{grid-template-columns:minmax(0,1fr);gap:24px}.cover-stage{max-width:280px;margin:0 auto;width:100%}}
+</style>
+
+<div class="app" id="app">
+<button class="focus-exit" id="focusExit" title="ออกจากโหมดโฟกัส (Esc)">× ออกจากโฟกัส</button>
+
+<header class="topbar">
+  <button class="brand" id="brandBtn" title="หน้าแรก">
+    <svg class="brandmark icon" viewBox="0 0 24 24"><path d="M19.5 3.5c-7.8.2-13 3.2-14.5 8.1-1.1 3.5.8 6.2 4.3 6.3 5.2.1 8.5-5.3 10.2-14.4Z"/><path d="M5 21c3-5.2 6.3-8.6 11-11.4"/></svg>
+    <span>LUMEN</span>
+  </button>
+  <div class="sep" id="crumbSep" hidden></div>
+  <button class="crumb" id="crumb" hidden></button>
+  <div class="spacer"></div>
+  <div class="save"><span class="dot"></span><span id="saveText">บันทึกแล้ว</span></div>
+  <button class="icon-btn" id="characterBtn" title="ตัวละคร" hidden>
+    <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6"/><circle cx="17" cy="9" r="2"/><path d="M15.5 14c2.7.1 4.5 1.9 5 5"/></svg>
+  </button>
+  <button class="icon-btn" id="searchBtn" title="ค้นหาในเรื่อง (Ctrl+K)" hidden>
+    <svg class="icon" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
+  </button>
+  <button class="icon-btn" id="focusTop" title="โหมดโฟกัส" hidden>
+    <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+  </button>
+  <button class="icon-btn" id="settingsBtn" title="ตั้งค่า">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+  </button>
+  <button class="icon-btn" id="moreBtn" title="เพิ่มเติม">•••</button>
+</header>
+
+<nav class="subnav" id="subnav" hidden>
+  <div class="tabs">
+    <button class="tab" data-go="cover">ปก</button>
+    <button class="tab" data-go="story">เรื่อง</button>
+    <button class="tab" data-go="chapters">บท</button>
+    <button class="tab" data-go="write">เขียน</button>
+    <button class="tab" data-go="read">อ่าน</button>
+    <button class="tab" data-go="data">คลังข้อมูล</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- หน้าแรก -->
+  <section class="view" id="v-home">
+    <div class="wrap">
+      <div class="page-head">
+        <div><p class="eyebrow">ห้องสมุดของคุณ</p><h1 class="page-title">นิยายของฉัน</h1><p class="page-sub" id="homeSub"></p></div>
+        <div class="home-actions">
+          <div class="search"><span>⌕</span><input id="homeSearch" placeholder="ค้นหาชื่อเรื่อง ผู้แต่ง แนว…"></div>
+          <button class="btn primary" id="newNovel">＋ เริ่มเรื่องใหม่</button>
+        </div>
+      </div>
+      <div id="resume"></div>
+      <div class="shelf" id="shelf"></div>
+    </div>
+  </section>
+
+  <!-- หน้าปก -->
+  <section class="view" id="v-cover" hidden>
+    <div class="wrap">
+      <div class="page-head"><div><p class="eyebrow">หน้าปก</p><h1 class="page-title">ออกแบบปกหนังสือ</h1></div></div>
+      <div class="cover-grid">
+        <div class="cover-stage">
+          <div id="coverPreview"></div>
+          <div class="row"><button class="btn primary" id="coverRead">อ่านเรื่องนี้</button><button class="btn" id="coverWrite">เขียนต่อ</button></div>
+        </div>
+        <div class="cover-form">
+          <div class="field"><label for="cTitle">ชื่อเรื่อง</label><input class="input" id="cTitle" placeholder="ชื่อนิยาย"></div>
+          <div class="field"><label for="cAuthor">ผู้แต่ง</label><input class="input" id="cAuthor" placeholder="นามปากกา"></div>
+          <div class="field"><label for="cTag">คำโปรย</label><input class="input" id="cTag" placeholder="ประโยคสั้น ๆ บนปก"></div>
+          <div class="field"><span class="label">แนวทางหน้าปก</span><div class="row"><button class="btn sm" type="button" id="coverEditorial">Editorial · ตัวอักษรนำ</button><button class="btn sm" type="button" id="coverCinematic">Cinematic · ภาพนำ</button></div><p class="page-sub">เลือกแนวทางก่อน แล้วปรับลายปกและภาพได้ตามต้องการ</p><div class="styles" id="styleList"></div></div>
+          <div class="field"><label for="cHue">โทนสี</label><div><div class="hue-track"></div><input class="range" type="range" min="0" max="360" id="cHue"></div></div>
+          <div class="row"><button class="btn" id="cUpload">อัปโหลดภาพปก</button><button class="btn ghost" id="cRemoveImg" hidden>ลบภาพปก</button><input type="file" id="cFile" accept="image/*" hidden></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- หน้าเรื่อง -->
+  <section class="view" id="v-story" hidden>
+    <div class="wrap">
+      <div class="page-head"><div><p class="eyebrow">ข้อมูลเรื่อง</p><h1 class="page-title" id="storyTitle"></h1></div></div>
+      <div class="story-grid">
+        <div class="cover-form">
+          <div class="field"><label for="sSynopsis">เรื่องย่อ</label><textarea class="area" id="sSynopsis" rows="9" placeholder="เล่าภาพรวมของเรื่องให้ผู้อ่านรู้ว่าเรื่องนี้เกี่ยวกับอะไร"></textarea></div>
+          <div class="row">
+            <div class="field" style="flex:1 1 180px"><label for="sGenre">แนวเรื่อง</label><input class="input" id="sGenre" placeholder="เช่น แฟนตาซี สืบสวน โรแมนติก"></div>
+            <div class="field" style="flex:1 1 160px"><label for="sStatus">สถานะ</label><select class="select" id="sStatus"><option value="writing">กำลังเขียน</option><option value="paused">พักไว้</option><option value="done">จบแล้ว</option></select></div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:2 1 220px"><label for="sTags">แท็ก (คั่นด้วยจุลภาค)</label><input class="input" id="sTags" placeholder="เวทมนตร์, โรงเรียน, ผจญภัย"></div>
+            <div class="field" style="flex:1 1 140px"><label for="sTarget">เป้าหมายจำนวนคำ</label><input class="input" id="sTarget" type="number" min="0" step="1000" placeholder="0"></div>
+          </div>
+        </div>
+        <aside class="panel">
+          <div class="label">ความคืบหน้า</div>
+          <div id="storyStats"></div>
+          <div class="bar" id="storyBarWrap" hidden><i id="storyBar"></i></div>
+          <div class="label">ตัวละคร</div>
+          <div class="chip-list" id="storyChars"></div>
+          <button class="btn sm" id="storyCharBtn">จัดการตัวละคร</button>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- หน้าบท -->
+  <section class="view" id="v-chapters" hidden>
+    <div class="wrap">
+      <div class="page-head">
+        <div><p class="eyebrow">สารบัญ</p><h1 class="page-title">บททั้งหมด</h1><p class="page-sub" id="chSub"></p></div>
+        <button class="btn primary" id="addChapter">＋ เพิ่มบทใหม่</button>
+      </div>
+      <div class="ch-list" id="chList"></div>
+    </div>
+  </section>
+
+  <!-- เขียน -->
+  <section class="view" id="v-write" hidden>
+    <div class="toolbar glass" id="toolbar">
+      <button class="tool" data-cmd="bold" title="ตัวหนา"><strong>B</strong></button>
+      <button class="tool" data-cmd="italic" title="ตัวเอียง"><em>I</em></button>
+      <button class="tool" data-cmd="underline" title="ขีดเส้นใต้"><u>U</u></button>
+      <button class="tool" data-cmd="strikeThrough" title="ขีดฆ่า"><s>S</s></button>
+      <span class="tool-sep"></span>
+      <button class="tool" data-heading="h1">H1</button>
+      <button class="tool" data-heading="h2">H2</button>
+      <span class="tool-sep"></span>
+      <button class="tool" data-cmd="insertUnorderedList" title="รายการ">☷</button>
+      <button class="tool" data-cmd="formatBlock" data-value="blockquote" title="อ้างอิง">❝</button>
+      <button class="tool" id="sceneBreak" title="ขึ้นฉากใหม่">—</button>
+      <span class="tool-sep"></span>
+      <button class="tool" id="fontBtn" title="ขนาดตัวอักษร">Aa⌄</button>
+      <button class="tool" id="undoBtn" title="เลิกทำ">↶</button>
+      <button class="tool" id="redoBtn" title="ทำซ้ำ">↷</button>
+    </div>
+    <div class="editor-scroll" id="editorScroll">
+      <article class="document">
+        <div class="chapter-no" id="wChNo">บทที่ 1</div>
+        <h1 class="chapter-title" id="wTitle" contenteditable="true" spellcheck="false"></h1>
+        <div class="prose" id="editor" contenteditable="true" spellcheck="true"></div>
+        <div class="chapter-foot">
+          <button class="btn" id="wPrev">← บทก่อนหน้า</button>
+          <button class="btn" id="wNext">บทถัดไป →</button>
+        </div>
+      </article>
+    </div>
+    <div class="floating glass" id="fontMenu">
+      <button data-size="16">ตัวอักษรเล็ก</button>
+      <button data-size="18">ตัวอักษรกลาง</button>
+      <button data-size="20">ตัวอักษรใหญ่</button>
+      <button data-size="22">ตัวอักษรใหญ่พิเศษ</button>
+    </div>
+    <div class="statusbar glass">
+      <div class="status-group"><strong id="wordCount">0</strong> คำ</div>
+      <div class="status-group status-sep hide-s">|</div>
+      <div class="status-group hide-s"><strong id="charCount">0</strong> ตัวอักษร</div>
+      <div class="status-group status-sep hide-s">|</div>
+      <div class="status-group hide-s">อ่านประมาณ <strong id="readTime">0</strong> นาที</div>
+      <div class="spacer"></div>
+      <button class="pick" id="chPick">บทที่ 1 ⌄</button>
+      <button class="icon-btn" id="importBtn" title="นำเข้าไฟล์ .txt/.html เข้าบทนี้">⇧</button>
+      <button class="icon-btn" id="copyBtn" title="คัดลอกข้อความทั้งบท">⧉</button>
+      <button class="icon-btn" id="typeBtn" title="ขนาดตัวอักษร">Aa</button>
+      <button class="focus-btn" id="focusBtn">◉ โฟกัส</button>
+    </div>
+  </section>
+
+  <!-- คลังข้อมูลโลกนิยาย -->
+  <section class="view" id="v-data" hidden>
+    <div class="wrap data-wrap">
+      <div class="page-head"><div><p class="eyebrow">WORLD & STORY ARCHIVE</p><h1 class="page-title">คลังข้อมูลของเรื่อง</h1><p class="page-sub">จัดการตัวละคร โลก สถานที่ ประวัติศาสตร์ องค์กร ระบบพลัง และบันทึกอ้างอิง แยกตามนิยายแต่ละเรื่อง</p></div>
+        <div class="row"><button class="btn" id="dataExport">ส่งออกข้อมูลเรื่องนี้ (.json)</button><button class="btn" id="dataImportBtn">นำเข้าข้อมูล (.json)</button><input id="dataImportFile" type="file" accept=".json,application/json" hidden><button class="btn primary" id="dataAdd">＋ เพิ่มข้อมูล</button></div>
+      </div>
+      <div class="data-layout">
+        <aside class="panel data-categories"><div class="label">หมวดหมู่</div><div id="dataCategories" class="data-cat-list"></div><div class="data-divider"></div><div class="label">เครื่องมือ</div><button class="btn sm" id="dataExportAll">สำรองทุกเรื่อง</button><p class="page-sub">ข้อมูลจัดเก็บในเบราว์เซอร์ของคุณ สามารถส่งออกเป็น JSON เพื่อเก็บสำรองหรือย้ายเครื่อง</p></aside>
+        <section class="data-main"><div class="data-tools"><div class="search" style="flex:1"><span>⌕</span><input id="dataSearch" placeholder="ค้นหาชื่อ เนื้อหา แท็ก…"></div><select class="select" id="dataLayout" style="width:140px"><option value="hybrid">มุมมองผสม</option><option value="cards">แกลเลอรี</option><option value="list">รายการ</option></select></div><div id="dataList" class="data-list"></div></section>
+        <aside class="panel data-detail" id="dataDetail"><div class="data-detail-empty"><div class="data-empty-mark">✧</div><strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong><p class="page-sub">รายละเอียด ความเชื่อมโยง และบันทึกอิสระจะแสดงที่นี่</p></div></aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- อ่าน -->
+  <section class="view" id="v-read" data-rt="dark" hidden>
+    <div class="rbar">
+      <button class="rbtn" id="rToc">☰ สารบัญ</button>
+      <div class="rtitle" id="rTitle"></div>
+      <button class="rbtn" id="rSmaller" title="เล็กลง">A−</button>
+      <button class="rbtn" id="rBigger" title="ใหญ่ขึ้น">A+</button>
+      <button class="rbtn hide-s" data-rt="dark">มืด</button>
+      <button class="rbtn hide-s" data-rt="sepia">ซีเปีย</button>
+      <button class="rbtn hide-s" data-rt="paper">ขาว</button>
+      <button class="rbtn" id="rTheme" title="เปลี่ยนธีม">◐</button>
+      <div class="rprog"><i id="rProg"></i></div>
+    </div>
+    <div class="rscroll" id="readScroll"><div class="rpage" id="readPage"></div></div>
+  </section>
+
+  <div class="backdrop" id="cwBackdrop"></div>
+  <section class="character-window glass" id="characterWindow" aria-label="ตัวละคร">
+    <div class="cw-head" id="cwHead">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6"/><circle cx="17" cy="9" r="2"/><path d="M15.5 14c2.7.1 4.5 1.9 5 5"/></svg>
+      <div class="cw-title" id="cwTitle">ตัวละคร</div>
+      <button class="icon-btn" id="cwClose" title="ปิด">×</button>
+    </div>
+    <div class="cw-body">
+      <div class="cw-list">
+        <div class="search" style="margin-bottom:10px"><span>⌕</span><input id="charSearch" placeholder="ค้นหาตัวละคร…"></div>
+        <button class="btn" style="width:100%;margin-bottom:10px" id="addChar">＋ ตัวละครใหม่</button>
+        <div id="cwList"></div>
+      </div>
+      <div class="cw-edit">
+        <div class="cw-top">
+          <div class="cw-avatar" id="cwAvatar">＋</div>
+          <div style="flex:1;min-width:0"><input class="cw-name" id="cwName" placeholder="ชื่อตัวละคร"><input class="cw-role" id="cwRole" placeholder="ป้ายสั้น ๆ (ไม่บังคับ)"></div>
+        </div>
+        <textarea class="cw-free" id="cwFree" placeholder="เขียนข้อมูลตัวละครได้ตามต้องการ&#10;&#10;เช่น อายุ วันเกิด รูปลักษณ์ บุคลิก ประวัติ ความสัมพันธ์ ความชอบ ความกลัว เป้าหมาย ความสามารถ&#10;&#10;ไม่กำหนดช่อง ไม่บังคับรูปแบบ"></textarea>
+        <div class="cw-hint">พื้นที่นี้เป็นของคุณเอง ไม่บังคับว่าต้องใส่อะไรตรงไหน</div>
+        <div class="cw-foot"><button class="btn warn" id="cwDelete">ลบ</button><button class="btn primary" id="cwSave">บันทึกตัวละคร</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="action-menu" id="menu"></div>
+
+<div class="modal-backdrop" id="settingsBackdrop">
+  <div class="modal glass">
+    <h2>ตั้งค่า</h2>
+    <div class="srow"><div><strong>ขนาดตัวอักษรในช่องเขียน</strong><span class="d">ใช้กับหน้าเขียนทุกบท</span></div>
+      <select class="select" id="setFont" style="width:110px"><option value="16">16 px</option><option value="18">18 px</option><option value="20">20 px</option><option value="22">22 px</option></select></div>
+    <div class="srow"><div><strong>บันทึกอัตโนมัติ</strong><span class="d">เก็บลงเบราว์เซอร์นี้ทุกครั้งที่แก้ไข</span></div><input id="setAuto" type="checkbox" checked></div>
+    <div class="srow" style="align-items:flex-start;flex-direction:column"><div><strong>สำรองข้อมูล</strong><span class="d">ข้อมูลเก็บในเบราว์เซอร์นี้เท่านั้น คัดลอกข้อความสำรองไปเก็บไว้ที่อื่นได้ แล้ววางกลับในช่องเพื่อกู้คืน</span></div>
+      <textarea class="area" id="backupBox" rows="4" style="font-family:monospace;font-size:11px;line-height:1.5" placeholder="ข้อมูลสำรองจะปรากฏที่นี่ หรือวางข้อมูลที่เคยสำรองไว้เพื่อกู้คืน"></textarea>
+      <div class="row"><button class="btn sm" id="backupMake">สร้างและคัดลอกข้อมูลสำรอง</button><button class="btn sm warn" id="backupRestore">กู้คืนจากข้อมูลในช่อง</button></div></div>
+    <div class="modal-actions"><button class="btn" id="settingsSave">บันทึกตอนนี้</button><button class="btn primary" id="settingsClose">ปิด</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="searchBackdrop">
+  <div class="modal glass">
+    <h2>ค้นหาในเรื่อง</h2>
+    <input class="input" id="searchInput" placeholder="พิมพ์คำที่ต้องการหา…">
+    <div class="results" id="searchResults"></div>
+    <div class="modal-actions"><button class="btn" id="searchClose">ปิด</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="dialogBackdrop">
+  <div class="modal glass" style="width:min(440px,100%)">
+    <h2 id="dialogTitle"></h2>
+    <p id="dialogMessage"></p>
+    <input class="input" id="dialogInput" type="text" hidden>
+    <div class="modal-actions"><button class="btn" id="dialogCancel">ยกเลิก</button><button class="btn primary" id="dialogConfirm">ตกลง</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept=".txt,.html,.htm" hidden>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+  const KEY = 'lumen_library_v3', OLD = 'lumen_project_v2';
+  const STATUS = {writing:'กำลังเขียน', done:'จบแล้ว', paused:'พักไว้'};
+  const fmtDate = t => { try { return new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric'}).format(new Date(t)); } catch(e) { return ''; } };
+
+  /* ---------- words ---------- */
+  const seg = (typeof Intl !== 'undefined' && Intl.Segmenter) ? new Intl.Segmenter('th', {granularity:'word'}) : null;
+  function countWords(t) {
+    t = (t || '').trim(); if (!t) return 0;
+    if (seg) { let n = 0; for (const s of seg.segment(t)) if (s.isWordLike) n++; return n; }
+    return t.split(/\s+/).length;
+  }
+  function htmlText(h) {
+    const s = (h || '').replace(/<\/(p|div|h\d|li|blockquote)>|<br\s*\/?>/gi, ' ');
+    return (new DOMParser().parseFromString(s, 'text/html').body.textContent || '');
+  }
+  const wcache = new Map();
+  function chWords(c) {
+    const k = c.content.length, h = wcache.get(c.id);
+    if (h && h.k === k) return h.n;
+    const n = countWords(htmlText(c.content)); wcache.set(c.id, {k, n}); return n;
+  }
+  const novelWords = n => n.chapters.reduce((a, c) => a + chWords(c), 0);
+
+  /* ---------- data ---------- */
+  function blankNovel(title) {
+    const t = Date.now();
+    return {id:uid(), title:title || 'เรื่องไม่มีชื่อ', author:'', tagline:'', synopsis:'', genre:'', status:'writing', tags:'', target:0,
+      cover:{style:'aurora', hue:210, image:'', mode:'editorial'}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
+      createdAt:t, updatedAt:t, lastChapter:null, read:null};
+  }
+  function load() {
+    let lib = null;
+    try { const raw = localStorage.getItem(KEY); if (raw) lib = JSON.parse(raw); } catch(e) { lib = null; }
+    if (!lib) {
+      lib = {novels:[], settings:{fontSize:20, autosave:true}, reader:{theme:'dark', size:19}};
+      try {
+        const raw = localStorage.getItem(OLD); const o = raw ? JSON.parse(raw) : null;
+        if (o && ((o.content && o.content.trim()) || (o.characters && o.characters.length))) {
+          const n = blankNovel(o.projectName && o.projectName !== 'Untitled' ? o.projectName : 'เรื่องที่นำเข้า');
+          n.chapters[0].content = o.content || '';
+          n.chapters[0].title = o.chapterName && o.chapterName !== 'Chapter 01' ? o.chapterName : '';
+          n.characters = Array.isArray(o.characters) ? o.characters : [];
+          lib.novels.push(n); lib.settings.fontSize = o.fontSize || 20;
+        }
+      } catch(e) {}
+    }
+    return normalize(lib);
+  }
+  function normalize(lib) {
+    lib.novels = Array.isArray(lib.novels) ? lib.novels : [];
+    lib.settings = Object.assign({fontSize:20, autosave:true}, lib.settings || {});
+    lib.reader = Object.assign({theme:'dark', size:19}, lib.reader || {});
+    lib.novels.forEach(n => {
+      n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
+      n.cover = Object.assign({style:'aurora', hue:210, image:'', mode:'editorial'}, n.cover || {});
+      n.cover.mode = n.cover.mode === 'cinematic' ? 'cinematic' : 'editorial';
+      n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : [];
+      n.knowledge.forEach(k => { k.id = k.id || uid(); k.category = k.category || 'lore'; k.title = k.title || 'ไม่มีชื่อ'; k.body = k.body || ''; k.summary = k.summary || ''; k.tags = k.tags || ''; k.links = Array.isArray(k.links) ? k.links : []; });
+      n.chapters = Array.isArray(n.chapters) && n.chapters.length ? n.chapters : [{id:uid(), title:'', content:'', updatedAt:Date.now()}];
+      n.chapters.forEach(c => { c.id = c.id || uid(); c.title = c.title || ''; c.content = c.content || ''; });
+      n.characters = Array.isArray(n.characters) ? n.characters : [];
+      n.status = STATUS[n.status] ? n.status : 'writing';
+      n.updatedAt = n.updatedAt || Date.now(); n.createdAt = n.createdAt || n.updatedAt;
+    });
+    return lib;
+  }
+  let lib = load();
+  let view = 'home', nid = null, cid = null, activeChar = -1;
+  let dataCategory = 'all', activeDataId = null;
+  const N = () => lib.novels.find(n => n.id === nid);
+  const C = () => { const n = N(); return n && n.chapters.find(c => c.id === cid); };
+
+  /* ---------- save ---------- */
+  const saveText = $('#saveText'); let pt = null;
+  function persist() {
+    try { localStorage.setItem(KEY, JSON.stringify(lib)); saveText.textContent = 'บันทึกแล้ว'; return true; }
+    catch(e) { saveText.textContent = 'บันทึกไม่ได้'; toast('บันทึกไม่ได้ พื้นที่เก็บข้อมูลอาจเต็มหรือถูกปิดไว้'); return false; }
+  }
+  function schedulePersist() {
+    if (!lib.settings.autosave) { saveText.textContent = 'ยังไม่บันทึก'; return; }
+    saveText.textContent = 'กำลังบันทึก…'; clearTimeout(pt); pt = setTimeout(persist, 450);
+  }
+  const flushNow = () => { clearTimeout(pt); persist(); };
+  window.addEventListener('beforeunload', flushNow);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushNow(); });
+
+  const toastEl = $('#toast'); let tt = null;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('show'), 1600); }
+
+  /* ---------- dialog ---------- */
+  const dBack = $('#dialogBackdrop'), dTitle = $('#dialogTitle'), dMsg = $('#dialogMessage'), dIn = $('#dialogInput');
+  let dCb = null;
+  function openDialog({title, message, input, value, ok, cancel, onConfirm}) {
+    dTitle.textContent = title || ''; dMsg.textContent = message || ''; dMsg.hidden = !message;
+    dIn.hidden = !input; dIn.value = value || '';
+    $('#dialogConfirm').textContent = ok || 'ตกลง'; $('#dialogCancel').textContent = cancel || 'ยกเลิก';
+    dCb = onConfirm; dBack.classList.add('open');
+    if (input) setTimeout(() => { dIn.focus(); dIn.select(); }, 50);
+  }
+  function closeDialog() { dBack.classList.remove('open'); dCb = null; }
+  $('#dialogConfirm').onclick = () => { const cb = dCb, v = dIn.hidden ? null : dIn.value; closeDialog(); if (cb) cb(v); };
+  $('#dialogCancel').onclick = closeDialog;
+  dBack.addEventListener('click', e => { if (e.target === dBack) closeDialog(); });
+  dIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#dialogConfirm').click(); } });
+  const askText = (title, message, value, cb, ok) => openDialog({title, message, input:true, value, onConfirm:cb, ok});
+  const askYes = (title, message, cb, ok) => openDialog({title, message, onConfirm:cb, ok:ok || 'ยืนยัน'});
+
+  /* ---------- menu ---------- */
+  const menu = $('#menu');
+  function closeMenu() { menu.classList.remove('open'); }
+  function openMenu(anchor, items, align) {
+    menu.innerHTML = '';
+    items.forEach(it => {
+      if (it === '-') { const s = document.createElement('div'); s.className = 'menu-sep'; menu.appendChild(s); return; }
+      const b = document.createElement('button'); b.textContent = it.label;
+      if (it.danger) b.classList.add('danger'); if (it.on) b.classList.add('on');
+      b.onclick = () => { closeMenu(); it.run(); }; menu.appendChild(b);
+    });
+    menu.style.cssText = 'top:0;left:0'; menu.classList.add('open');
+    const r = anchor.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight;
+    let left = align === 'right' ? r.right - w : r.left;
+    left = Math.max(8, Math.min(left, innerWidth - w - 8));
+    let top = r.bottom + 8; if (top + h > innerHeight - 8) top = Math.max(8, r.top - h - 8);
+    menu.style.left = left + 'px'; menu.style.top = top + 'px';
+  }
+  document.addEventListener('mousedown', e => {
+    if (!e.target.closest('#menu') && !e.target.closest('[data-menu]')) closeMenu();
+    if (!e.target.closest('#fontMenu') && !e.target.closest('#fontBtn') && !e.target.closest('#typeBtn')) $('#fontMenu').classList.remove('show');
+  });
+
+  /* ---------- covers ---------- */
+  function coverHTML(n, over) {
+    const cv = Object.assign({}, n.cover, over || {});
+    const img = typeof cv.image === 'string' && cv.image.startsWith('data:image/') ? cv.image : '';
+    let st = cv.style; if (st === 'image' && !img) st = 'aurora';
+    const bg = st === 'image' ? ` style="background-image:url('${img}')"` : '';
+    return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0}"><div class="c-bg"${bg}></div><div class="c-in"><div><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}</div><div class="c-author">${esc(n.author)}</div></div></div>`;
+  }
+
+  /* ---------- navigation ---------- */
+  const VIEWS = ['home','cover','story','chapters','write','read','data'];
+  function go(v, o = {}) {
+    if (view === 'write') commitEditor();
+    if (o.novel !== undefined && o.novel !== nid) { nid = o.novel; activeChar = -1; }
+    if (v !== 'home' && !N()) { v = 'home'; nid = null; }
+    if (o.chapter) cid = o.chapter;
+    const n = N();
+    if (n && !C()) cid = (n.chapters.find(c => c.id === n.lastChapter) || n.chapters[0]).id;
+    view = v;
+    if (v !== 'write') document.body.classList.remove('focus');
+    VIEWS.forEach(x => { $('#v-' + x).hidden = x !== v; });
+    $('#subnav').hidden = v === 'home';
+    $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.go === v));
+    $('#crumb').hidden = $('#crumbSep').hidden = v === 'home';
+    if (n) $('#crumb').textContent = n.title;
+    $('#characterBtn').hidden = $('#searchBtn').hidden = v === 'home';
+    $('#focusTop').hidden = v !== 'write';
+    ({home:renderHome, cover:renderCover, story:renderStory, chapters:renderChapters, write:renderWrite, read:renderRead, data:renderData})[v]();
+    if (['home','cover','story','chapters','data'].includes(v)) $('#v-' + v).scrollTop = 0;
+    persistSoon();
+  }
+  function persistSoon() { schedulePersist(); }
+  $('#brandBtn').onclick = () => go('home');
+  $('#crumb').onclick = () => go('cover');
+  $$('.tab').forEach(t => t.onclick = () => go(t.dataset.go));
+
+  /* ---------- home ---------- */
+  function renderHome() {
+    const q = $('#homeSearch').value.trim().toLowerCase();
+    const all = lib.novels.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+    const list = all.filter(n => !q || (n.title + ' ' + n.author + ' ' + n.genre + ' ' + n.tags).toLowerCase().includes(q));
+    $('#homeSub').textContent = all.length ? `${all.length} เรื่อง` : 'ยังไม่มีเรื่องบนชั้น';
+    const last = all[0];
+    $('#resume').innerHTML = last && !q ? (() => {
+      const ci = Math.max(0, last.chapters.findIndex(c => c.id === last.lastChapter));
+      return `<div class="resume glass"><div><p class="eyebrow">เขียนต่อจากครั้งที่แล้ว</p><div class="resume-t">${esc(last.title)} · บทที่ ${ci + 1}</div></div><button class="btn primary" id="resumeBtn" data-id="${last.id}">เขียนต่อ</button></div>`;
+    })() : '';
+    const shelf = $('#shelf');
+    if (!all.length) {
+      shelf.innerHTML = `<div class="empty"><strong>ชั้นหนังสือยังว่างอยู่</strong><span>ตั้งชื่อเรื่อง แล้วเริ่มบทแรกได้เลย ปก เรื่องย่อ และตัวละครแต่งเพิ่มทีหลังได้</span><button class="btn primary" id="emptyNew">＋ เริ่มเรื่องแรก</button></div>`;
+      return;
+    }
+    if (!list.length) { shelf.innerHTML = `<div class="empty"><span>ไม่พบเรื่องที่ตรงกับคำค้น</span></div>`; return; }
+    shelf.innerHTML = list.map(n => `<article class="book" data-id="${n.id}">
+      <button class="book-cover" data-a="cover" aria-label="เปิด ${esc(n.title)}">${coverHTML(n)}</button>
+      <div><div class="book-title">${esc(n.title)}</div>
+      <div class="book-sub">${n.chapters.length} บท · ${novelWords(n).toLocaleString()} คำ</div>
+      <span class="pill st-${n.status}">${STATUS[n.status]}</span>
+      <div class="book-act"><button class="btn sm" data-a="read">อ่าน</button><button class="btn sm" data-a="write">เขียน</button></div></div></article>`).join('');
+  }
+  $('#homeSearch').addEventListener('input', renderHome);
+  $('#shelf').addEventListener('click', e => {
+    if (e.target.id === 'emptyNew') return newNovel();
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const id = b.closest('.book').dataset.id; go(b.dataset.a, {novel:id});
+  });
+  $('#resume').addEventListener('click', e => { const b = e.target.closest('#resumeBtn'); if (b) go('write', {novel:b.dataset.id}); });
+  function newNovel() {
+    askText('เริ่มเรื่องใหม่', 'ตั้งชื่อเรื่อง เปลี่ยนทีหลังได้', '', v => {
+      const n = blankNovel((v || '').trim()); lib.novels.push(n); persist(); go('cover', {novel:n.id}); toast('สร้างเรื่องแล้ว');
+    }, 'สร้างเรื่อง');
+  }
+  $('#newNovel').onclick = newNovel;
+
+  /* ---------- cover page ---------- */
+  function renderCover() {
+    const n = N();
+    $('#cTitle').value = n.title; $('#cAuthor').value = n.author; $('#cTag').value = n.tagline; $('#cHue').value = n.cover.hue;
+    refreshCover();
+  }
+  function refreshCover() {
+    const n = N(); if (!n) return;
+    $('#coverPreview').innerHTML = coverHTML(n); $('#coverPreview').className = 'cover-mode-' + (n.cover.mode || 'editorial');
+    $('#coverEditorial').classList.toggle('cover-mode-active', (n.cover.mode || 'editorial') === 'editorial'); $('#coverCinematic').classList.toggle('cover-mode-active', n.cover.mode === 'cinematic');
+    const hasImg = !!(n.cover.image && n.cover.image.startsWith('data:image/'));
+    const styles = ['aurora','moon','lines','frame'].concat(hasImg ? ['image'] : []);
+    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${n.cover.style === s ? ' on' : ''}" data-s="${s}" title="${({aurora:'แสงเหนือ',moon:'จันทร์',lines:'เส้นสาย',frame:'กรอบ',image:'ภาพของคุณ'})[s]}">${coverHTML(n, {style:s})}</button>`).join('');
+    $('#cRemoveImg').hidden = !hasImg;
+    $('#crumb').textContent = n.title;
+  }
+  function touchNovel() { const n = N(); if (n) n.updatedAt = Date.now(); schedulePersist(); }
+  [['#cTitle','title'],['#cAuthor','author'],['#cTag','tagline']].forEach(([sel, k]) => $(sel).addEventListener('input', e => {
+    const n = N(); n[k] = k === 'title' ? (e.target.value || 'เรื่องไม่มีชื่อ') : e.target.value; touchNovel(); refreshCover();
+  }));
+  $('#coverEditorial').onclick = () => { N().cover.mode = 'editorial'; touchNovel(); refreshCover(); };
+  $('#coverCinematic').onclick = () => { N().cover.mode = 'cinematic'; touchNovel(); refreshCover(); };
+  $('#cHue').addEventListener('input', e => { const n = N(); n.cover.hue = +e.target.value; touchNovel(); refreshCover(); });
+  $('#styleList').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; N().cover.style = b.dataset.s; touchNovel(); refreshCover(); });
+  $('#cUpload').onclick = () => $('#cFile').click();
+  $('#cRemoveImg').onclick = () => { const n = N(); n.cover.image = ''; if (n.cover.style === 'image') n.cover.style = 'aurora'; touchNovel(); refreshCover(); };
+  $('#cFile').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try {
+      const data = await fileToCover(f); const n = N(); n.cover.image = data; n.cover.style = 'image';
+      touchNovel(); refreshCover(); toast('ใส่ภาพปกแล้ว');
+    } catch(err) { toast('เปิดไฟล์ภาพนี้ไม่ได้'); }
+  };
+  function fileToCover(file) {
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        const im = new Image();
+        im.onload = () => {
+          const W = 600, H = 900, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+          const cx = cv.getContext('2d'), s = Math.max(W / im.width, H / im.height), w = im.width * s, h = im.height * s;
+          cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); res(cv.toDataURL('image/jpeg', .82));
+        };
+        im.onerror = rej; im.src = fr.result;
+      };
+      fr.onerror = rej; fr.readAsDataURL(file);
+    });
+  }
+  $('#coverRead').onclick = () => go('read');
+  $('#coverWrite').onclick = () => go('write');
+
+  /* ---------- story page ---------- */
+  function renderStory() {
+    const n = N();
+    $('#storyTitle').textContent = n.title;
+    $('#sSynopsis').value = n.synopsis; $('#sGenre').value = n.genre; $('#sStatus').value = n.status; $('#sTags').value = n.tags; $('#sTarget').value = n.target || '';
+    refreshStoryPanel();
+  }
+  function refreshStoryPanel() {
+    const n = N(), w = novelWords(n);
+    $('#storyStats').innerHTML = [
+      ['สถานะ', `<span class="pill st-${n.status}">${STATUS[n.status]}</span>`],
+      ['จำนวนบท', n.chapters.length.toLocaleString()],
+      ['จำนวนคำ', w.toLocaleString()],
+      ['เวลาอ่านรวม', '~ ' + Math.max(1, Math.ceil(w / 250)) + ' นาที'],
+      ['เริ่มเขียน', fmtDate(n.createdAt)],
+      ['แก้ไขล่าสุด', fmtDate(n.updatedAt)]
+    ].map(([a, b]) => `<div class="stat" style="padding:5px 0"><span>${a}</span><b>${b}</b></div>`).join('');
+    const bw = $('#storyBarWrap'); bw.hidden = !(n.target > 0);
+    if (n.target > 0) { $('#storyBar').style.width = Math.min(100, w / n.target * 100) + '%'; }
+    $('#storyChars').innerHTML = n.characters.length
+      ? n.characters.slice(0, 6).map((c, i) => `<button class="chip" data-i="${i}"><div class="avatar">${esc((c.name || '?').slice(0, 1))}</div><span>${esc(c.name || 'ไม่มีชื่อ')}${c.role ? ' · ' + esc(c.role) : ''}</span></button>`).join('')
+      : '<div class="page-sub" style="margin:0">ยังไม่มีตัวละคร</div>';
+  }
+  $('#storyChars').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) openCharacterWindow(+b.dataset.i); });
+  $('#storyCharBtn').onclick = () => openCharacterWindow();
+  [['#sSynopsis','synopsis'],['#sGenre','genre'],['#sTags','tags']].forEach(([sel, k]) => $(sel).addEventListener('input', e => { N()[k] = e.target.value; touchNovel(); }));
+  $('#sStatus').onchange = e => { N().status = e.target.value; touchNovel(); refreshStoryPanel(); };
+  $('#sTarget').addEventListener('input', e => { N().target = Math.max(0, +e.target.value || 0); touchNovel(); refreshStoryPanel(); });
+
+  /* ---------- chapters page ---------- */
+  function chLabel(n, c) { return 'บทที่ ' + (n.chapters.indexOf(c) + 1); }
+  function renderChapters() {
+    const n = N(), w = novelWords(n);
+    $('#chSub').textContent = `${n.chapters.length} บท · ${w.toLocaleString()} คำ`;
+    $('#chList').innerHTML = n.chapters.map((c, i) => `<div class="ch-row" data-id="${c.id}">
+      <div class="ch-no">${String(i + 1).padStart(2, '0')}</div>
+      <div class="ch-main"><button class="ch-name${c.title ? '' : ' none'}" data-a="rename" title="เปลี่ยนชื่อบท">${esc(c.title || 'ยังไม่ตั้งชื่อบท')}</button>
+        <div class="ch-meta">${chWords(c).toLocaleString()} คำ · แก้ไข ${fmtDate(c.updatedAt)}</div></div>
+      <div class="ch-acts"><button class="btn" data-a="read">อ่าน</button><button class="btn" data-a="write">เขียน</button>
+        <button class="icon-btn" data-a="up" title="เลื่อนขึ้น"${i === 0 ? ' disabled' : ''}>↑</button>
+        <button class="icon-btn" data-a="down" title="เลื่อนลง"${i === n.chapters.length - 1 ? ' disabled' : ''}>↓</button>
+        <button class="icon-btn" data-a="del" title="ลบบท">✕</button></div></div>`).join('');
+  }
+  $('#chList').addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const n = N(), id = b.closest('.ch-row').dataset.id, i = n.chapters.findIndex(c => c.id === id), c = n.chapters[i];
+    const a = b.dataset.a;
+    if (a === 'read' || a === 'write') go(a, {chapter:id});
+    else if (a === 'rename') askText('ชื่อบท', chLabel(n, c), c.title, v => { c.title = (v || '').trim(); touchNovel(); renderChapters(); }, 'บันทึก');
+    else if (a === 'up' && i > 0) { [n.chapters[i - 1], n.chapters[i]] = [c, n.chapters[i - 1]]; touchNovel(); renderChapters(); }
+    else if (a === 'down' && i < n.chapters.length - 1) { [n.chapters[i + 1], n.chapters[i]] = [c, n.chapters[i + 1]]; touchNovel(); renderChapters(); }
+    else if (a === 'del') {
+      if (n.chapters.length < 2) return toast('ต้องมีอย่างน้อยหนึ่งบท');
+      askYes('ลบบทนี้?', `${chLabel(n, c)} ${c.title} จะถูกลบถาวร`, () => {
+        n.chapters.splice(i, 1); if (cid === id) cid = n.chapters[Math.max(0, i - 1)].id; if (n.lastChapter === id) n.lastChapter = null;
+        persist(); renderChapters(); toast('ลบบทแล้ว');
+      }, 'ลบ');
+    }
+  });
+  function addChapter(thenGo) {
+    const n = N(), c = {id:uid(), title:'', content:'', updatedAt:Date.now()}; n.chapters.push(c); n.updatedAt = c.updatedAt; persist();
+    if (thenGo) go('write', {chapter:c.id}); else renderChapters();
+    toast('เพิ่มบทใหม่แล้ว');
+  }
+  $('#addChapter').onclick = () => addChapter(false);
+  function chapterMenu(anchor, onPick, align) {
+    const n = N();
+    openMenu(anchor, n.chapters.map((c, i) => ({label: `${i + 1}. ${c.title || 'ยังไม่ตั้งชื่อบท'}`, on: c.id === cid, run: () => onPick(c.id)})), align);
+  }
+
+  /* ---------- write ---------- */
+  const editor = $('#editor'), wTitle = $('#wTitle');
+  let savedRange = null, st = null;
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch(e) {}
+  function rememberSel() { const s = getSelection(); if (!s || !s.rangeCount) return; const r = s.getRangeAt(0); if (editor.contains(r.commonAncestorContainer)) savedRange = r.cloneRange(); }
+  function restoreSel() { editor.focus(); if (savedRange) { const s = getSelection(); s.removeAllRanges(); s.addRange(savedRange); } }
+  function commitEditor() { const c = C(); if (!c) return; if (c.content !== editor.innerHTML) { c.content = editor.innerHTML; c.updatedAt = Date.now(); const n = N(); if (n) n.updatedAt = c.updatedAt; } }
+  function stats() {
+    const text = editor.innerText.replace(/\s+/g, ' ').trim(), w = countWords(text);
+    $('#wordCount').textContent = w.toLocaleString(); $('#charCount').textContent = text.length.toLocaleString();
+    $('#readTime').textContent = text ? Math.max(1, Math.ceil(w / 250)) : 0;
+  }
+  const statsSoon = () => { clearTimeout(st); st = setTimeout(stats, 250); };
+  function renderWrite() {
+    const n = N(), c = C(), i = n.chapters.indexOf(c); n.lastChapter = c.id;
+    $('#wChNo').textContent = 'บทที่ ' + (i + 1); wTitle.textContent = c.title; editor.innerHTML = c.content;
+    editor.style.fontSize = lib.settings.fontSize + 'px'; savedRange = null; stats();
+    $('#chPick').textContent = `บทที่ ${i + 1} ⌄`;
+    $('#wPrev').disabled = i === 0; $('#wNext').textContent = i < n.chapters.length - 1 ? 'บทถัดไป →' : '＋ เขียนบทต่อไป';
+    $('#editorScroll').scrollTop = 0;
+  }
+  editor.addEventListener('input', () => { const c = C(); if (!c) return; commitEditor(); rememberSel(); statsSoon(); schedulePersist(); });
+  ['keyup','mouseup','blur'].forEach(ev => editor.addEventListener(ev, rememberSel));
+  editor.addEventListener('paste', e => {
+    const t = e.clipboardData && e.clipboardData.getData('text/plain'); if (t == null) return;
+    e.preventDefault();
+    if (!/\n/.test(t)) document.execCommand('insertText', false, t);
+    else document.execCommand('insertHTML', false, t.replace(/\r/g, '').split(/\n{2,}/).map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join(''));
+  });
+  wTitle.addEventListener('input', () => {
+    if (!wTitle.textContent) wTitle.innerHTML = '';
+    const c = C(); c.title = wTitle.textContent.replace(/\n/g, ' ').trim(); c.updatedAt = Date.now(); schedulePersist();
+  });
+  wTitle.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editor.focus(); } });
+  wTitle.addEventListener('paste', e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData.getData('text/plain') || '').replace(/\s+/g, ' ')); });
+  $$('.tool').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+  $$('[data-cmd]').forEach(b => b.addEventListener('click', () => {
+    restoreSel(); const cmd = b.dataset.cmd;
+    if (cmd === 'formatBlock') document.execCommand(cmd, false, b.dataset.value); else document.execCommand(cmd, false, null);
+    rememberSel(); commitEditor(); schedulePersist(); stats();
+  }));
+  $$('[data-heading]').forEach(b => b.addEventListener('click', () => { restoreSel(); document.execCommand('formatBlock', false, b.dataset.heading); rememberSel(); commitEditor(); schedulePersist(); }));
+  $('#undoBtn').onclick = () => { restoreSel(); document.execCommand('undo'); rememberSel(); commitEditor(); schedulePersist(); stats(); };
+  $('#redoBtn').onclick = () => { restoreSel(); document.execCommand('redo'); rememberSel(); commitEditor(); schedulePersist(); stats(); };
+  $('#sceneBreak').onclick = () => {
+    restoreSel(); document.execCommand('insertHTML', false, '<p style="text-align:center;letter-spacing:.35em;color:#777">* * *</p><p><br></p>');
+    rememberSel(); commitEditor(); schedulePersist(); stats();
+  };
+  const fontMenu = $('#fontMenu');
+  $('#fontBtn').onclick = $('#typeBtn').onclick = () => fontMenu.classList.toggle('show');
+  fontMenu.querySelectorAll('[data-size]').forEach(b => b.onclick = () => {
+    lib.settings.fontSize = +b.dataset.size; editor.style.fontSize = b.dataset.size + 'px'; persist(); fontMenu.classList.remove('show');
+  });
+  const toggleFocus = () => document.body.classList.toggle('focus');
+  $('#focusBtn').onclick = $('#focusTop').onclick = $('#focusExit').onclick = toggleFocus;
+  $('#chPick').onclick = e => { chapterMenu(e.currentTarget, id => go('write', {chapter:id})); };
+  $('#chPick').setAttribute('data-menu', '');
+  $('#wPrev').onclick = () => { const n = N(), i = n.chapters.indexOf(C()); if (i > 0) go('write', {chapter:n.chapters[i - 1].id}); };
+  $('#wNext').onclick = () => { const n = N(), i = n.chapters.indexOf(C()); if (i < n.chapters.length - 1) go('write', {chapter:n.chapters[i + 1].id}); else addChapter(true); };
+  $('#copyBtn').onclick = () => {
+    const text = (wTitle.textContent ? wTitle.textContent + '\n\n' : '') + editor.innerText.trim();
+    const done = () => toast('คัดลอกทั้งบทแล้ว'), fail = () => { const r = document.createRange(); r.selectNodeContents(editor); getSelection().removeAllRanges(); getSelection().addRange(r); toast('เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก'); };
+    try { navigator.clipboard.writeText(text).then(done, fail); } catch(e) { fail(); }
+  };
+  $('#importBtn').onclick = () => $('#fileInput').click();
+  $('#fileInput').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try {
+      const text = await f.text(); let html;
+      if (/\.html?$/i.test(f.name)) {
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+        ['script','style','iframe','object','embed','link','meta','img','svg','form','input','button'].forEach(t => doc.querySelectorAll(t).forEach(n => n.remove()));
+        doc.querySelectorAll('*').forEach(n => [...n.attributes].forEach(a => { if (/^on/i.test(a.name) || (/^(href|src|style)$/i.test(a.name))) n.removeAttribute(a.name); }));
+        html = doc.body ? doc.body.innerHTML : '';
+      } else html = text.replace(/\r/g, '').split(/\n{2,}/).map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
+      const c = C();
+      if (c.content.trim()) { askYes('นำเข้าไฟล์', 'บทนี้มีเนื้อหาอยู่แล้ว เนื้อหาเดิมจะถูกแทนที่ด้วยไฟล์ที่เลือก', () => applyImport(html), 'แทนที่'); }
+      else applyImport(html);
+    } catch(err) { toast('นำเข้าไม่สำเร็จ'); }
+  };
+  function applyImport(html) { editor.innerHTML = html; commitEditor(); stats(); persist(); toast('นำเข้าแล้ว'); }
+
+  /* ---------- reader ---------- */
+  const rs = $('#readScroll'), rv = $('#v-read'); let rt = null;
+  function renderRead() {
+    const n = N(), c = C(), i = n.chapters.indexOf(c);
+    rv.dataset.rt = lib.reader.theme; rv.style.setProperty('--r-size', lib.reader.size + 'px');
+    $$('#v-read [data-rt]').forEach(b => b.classList.toggle('on', b.dataset.rt === lib.reader.theme));
+    $('#rTitle').textContent = `${n.title} · บทที่ ${i + 1}`;
+    const body = htmlText(c.content).trim() ? c.content : '';
+    $('#readPage').innerHTML = `<div class="r-no">บทที่ ${i + 1}</div><h1 class="r-title">${esc(c.title || n.title)}</h1>` +
+      (body ? `<div class="r-body">${body}</div>` : `<div class="r-empty">บทนี้ยังไม่มีเนื้อหา<br><br><button class="rbtn" data-r="write" style="height:40px;padding:0 18px;border:1px solid var(--r-line);border-radius:12px;background:transparent;color:var(--r-ink)">เขียนบทนี้</button></div>`) +
+      `<div class="r-foot"><button class="rbtn" data-r="prev"${i === 0 ? ' disabled' : ''}>← บทก่อนหน้า</button>` +
+      (i < n.chapters.length - 1 ? `<button class="rbtn" data-r="next">บทถัดไป →</button>` : `<button class="rbtn" data-r="end">จบแล้ว กลับหน้าปก</button>`) + `</div>`;
+    requestAnimationFrame(() => {
+      const max = rs.scrollHeight - rs.clientHeight;
+      rs.scrollTop = n.read && n.read.chapter === cid && max > 0 ? n.read.pos * max : 0;
+      progress();
+    });
+  }
+  function progress() {
+    const max = rs.scrollHeight - rs.clientHeight, f = max > 0 ? Math.min(1, rs.scrollTop / max) : 0;
+    $('#rProg').style.transform = `scaleX(${f})`; return f;
+  }
+  rs.addEventListener('scroll', () => {
+    const f = progress(), n = N(); if (!n || view !== 'read') return;
+    clearTimeout(rt); rt = setTimeout(() => { n.read = {chapter:cid, pos:f}; schedulePersist(); }, 600);
+  });
+  $('#readPage').addEventListener('click', e => {
+    const b = e.target.closest('[data-r]'); if (!b) return;
+    const n = N(), i = n.chapters.indexOf(C()), a = b.dataset.r;
+    if (a === 'prev') go('read', {chapter:n.chapters[i - 1].id});
+    else if (a === 'next') go('read', {chapter:n.chapters[i + 1].id});
+    else if (a === 'write') go('write');
+    else go('cover');
+  });
+  $('#rToc').setAttribute('data-menu', '');
+  $('#rToc').onclick = e => chapterMenu(e.currentTarget, id => go('read', {chapter:id}));
+  const setSize = d => { lib.reader.size = Math.max(14, Math.min(28, lib.reader.size + d)); rv.style.setProperty('--r-size', lib.reader.size + 'px'); persist(); };
+  $('#rSmaller').onclick = () => setSize(-1); $('#rBigger').onclick = () => setSize(1);
+  const setTheme = t => { lib.reader.theme = t; rv.dataset.rt = t; $$('#v-read [data-rt]').forEach(b => b.classList.toggle('on', b.dataset.rt === t)); persist(); };
+  $$('#v-read button[data-rt]').forEach(b => b.onclick = () => setTheme(b.dataset.rt));
+  $('#rTheme').onclick = () => { const o = ['dark','sepia','paper']; setTheme(o[(o.indexOf(lib.reader.theme) + 1) % 3]); };
+
+  /* ---------- characters ---------- */
+  const cw = $('#characterWindow'), cwBack = $('#cwBackdrop');
+  const chars = () => (N() ? N().characters : []);
+  function openCharacterWindow(idx) {
+    cw.classList.add('open'); cwBack.classList.add('open'); $('#cwTitle').textContent = 'ตัวละคร · ' + N().title;
+    if (typeof idx === 'number') activeChar = idx;
+    renderChars(); if (activeChar < 0 && chars().length) selectChar(0); else if (activeChar >= 0) selectChar(activeChar);
+  }
+  function closeCharacterWindow() { if (!cw.classList.contains('open')) return; saveActiveChar(); persist(); cw.classList.remove('open'); cwBack.classList.remove('open'); if (view === 'story') refreshStoryPanel(); }
+  $('#characterBtn').onclick = () => openCharacterWindow();
+  $('#cwClose').onclick = closeCharacterWindow; cwBack.onclick = closeCharacterWindow;
+  function renderChars() {
+    const f = $('#charSearch').value.toLowerCase(), list = $('#cwList'); list.innerHTML = '';
+    const m = chars().map((c, i) => ({c, i})).filter(x => ((x.c.name || '') + ' ' + (x.c.role || '') + ' ' + (x.c.info || '')).toLowerCase().includes(f));
+    if (!m.length) { list.innerHTML = '<div class="cw-empty">ยังไม่มีตัวละคร<br>กด “ตัวละครใหม่” เพื่อเริ่มสร้าง</div>'; return; }
+    m.forEach(({c, i}) => {
+      const el = document.createElement('div'); el.className = 'cw-item' + (i === activeChar ? ' active' : '');
+      el.innerHTML = `<div class="avatar">${esc((c.name || '?').slice(0, 1))}</div><div style="min-width:0"><div class="nm">${esc(c.name || 'ไม่มีชื่อ')}</div><div class="rl">${esc(c.role || '')}</div></div>`;
+      el.onclick = () => selectChar(i); list.appendChild(el);
+    });
+  }
+  function selectChar(i) {
+    saveActiveChar(); activeChar = i; const c = chars()[i]; if (!c) return;
+    $('#cwName').value = c.name || ''; $('#cwRole').value = c.role || ''; $('#cwFree').value = c.info || c.note || '';
+    $('#cwAvatar').textContent = (c.name || '?').slice(0, 1); renderChars();
+  }
+  function saveActiveChar() {
+    const c = chars()[activeChar]; if (!c) return;
+    c.name = $('#cwName').value.trim() || 'ไม่มีชื่อ'; c.role = $('#cwRole').value.trim(); c.info = $('#cwFree').value; c.note = c.info;
+  }
+  $('#charSearch').addEventListener('input', renderChars);
+  $('#addChar').onclick = () => {
+    saveActiveChar(); chars().push({name:'ตัวละครใหม่', role:'', info:''}); activeChar = chars().length - 1;
+    selectChar(activeChar); $('#cwName').focus(); $('#cwName').select(); persist();
+  };
+  $('#cwSave').onclick = () => { saveActiveChar(); persist(); renderChars(); toast('บันทึกตัวละครแล้ว'); };
+  $('#cwDelete').onclick = () => {
+    const c = chars()[activeChar]; if (!c) return;
+    askYes('ลบตัวละคร?', `ลบ ${c.name || 'ตัวละครนี้'} ถาวร`, () => {
+      chars().splice(activeChar, 1); activeChar = Math.min(activeChar, chars().length - 1);
+      if (activeChar >= 0) selectChar(activeChar); else { $('#cwName').value = $('#cwRole').value = $('#cwFree').value = ''; $('#cwAvatar').textContent = '＋'; renderChars(); }
+      persist(); toast('ลบตัวละครแล้ว');
+    }, 'ลบ');
+  };
+  $('#cwName').addEventListener('input', () => { $('#cwAvatar').textContent = ($('#cwName').value.trim() || '?').slice(0, 1); });
+  $('#cwFree').addEventListener('input', () => { const c = chars()[activeChar]; if (c) { c.info = $('#cwFree').value; c.note = c.info; schedulePersist(); } });
+  (() => {
+    const head = $('#cwHead'); let drag = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    head.addEventListener('pointerdown', e => {
+      if (e.target.closest('button')) return;
+      const r = cw.getBoundingClientRect(); drag = true; sx = e.clientX; sy = e.clientY; ox = r.left + r.width / 2; oy = r.top + r.height / 2;
+      cw.style.left = ox + 'px'; cw.style.top = oy + 'px'; cw.style.transform = 'translate(-50%,-50%) scale(1)'; head.setPointerCapture(e.pointerId);
+    });
+    head.addEventListener('pointermove', e => { if (drag) { cw.style.left = (ox + e.clientX - sx) + 'px'; cw.style.top = (oy + e.clientY - sy) + 'px'; } });
+    head.addEventListener('pointerup', () => drag = false);
+  })();
+
+  /* ---------- search in novel ---------- */
+  const sBack = $('#searchBackdrop'), sIn = $('#searchInput');
+  function openSearch() { if (!N()) return; sBack.classList.add('open'); sIn.value = ''; $('#searchResults').innerHTML = ''; setTimeout(() => sIn.focus(), 50); }
+  function closeSearch() { sBack.classList.remove('open'); }
+  $('#searchBtn').onclick = openSearch; $('#searchClose').onclick = closeSearch;
+  sBack.addEventListener('click', e => { if (e.target === sBack) closeSearch(); });
+  sIn.addEventListener('input', () => {
+    const q = sIn.value.trim().toLowerCase(), box = $('#searchResults'), n = N();
+    if (!q) { box.innerHTML = ''; return; }
+    const out = [];
+    n.chapters.forEach((c, i) => {
+      const t = htmlText(c.content).replace(/\s+/g, ' '), tl = (c.title || '').toLowerCase();
+      let at = t.toLowerCase().indexOf(q);
+      if (at < 0 && !tl.includes(q)) return;
+      const s = at < 0 ? '' : t.slice(Math.max(0, at - 30), at + q.length + 50);
+      out.push({id:c.id, label:`บทที่ ${i + 1}${c.title ? ' · ' + c.title : ''}`, snip:s, at});
+    });
+    box.innerHTML = out.length ? out.slice(0, 40).map(r => {
+      const sn = esc(r.snip), qi = sn.toLowerCase().indexOf(esc(q).toLowerCase());
+      const html = qi < 0 ? sn : sn.slice(0, qi) + '<mark>' + sn.slice(qi, qi + esc(q).length) + '</mark>' + sn.slice(qi + esc(q).length);
+      return `<button class="res" data-id="${r.id}"><b>${esc(r.label)}</b><span>${html}</span></button>`;
+    }).join('') : '<div class="page-sub" style="padding:10px 4px">ไม่พบข้อความ</div>';
+    box.dataset.q = q;
+  });
+  $('#searchResults').addEventListener('click', e => {
+    const b = e.target.closest('.res'); if (!b) return;
+    const q = $('#searchResults').dataset.q; closeSearch(); go('write', {chapter:b.dataset.id});
+    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT); let node;
+    while ((node = walker.nextNode())) {
+      const i = node.nodeValue.toLowerCase().indexOf(q);
+      if (i >= 0) {
+        const r = document.createRange(); r.setStart(node, i); r.setEnd(node, i + q.length);
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r); rememberSel();
+        node.parentElement && node.parentElement.scrollIntoView({block:'center'}); break;
+      }
+    }
+  });
+
+  /* ---------- per-novel knowledge archive ---------- */
+  const DATA_CATS = [
+    {id:'all',label:'ทุกหมวด',icon:'◈'}, {id:'character',label:'ตัวละคร',icon:'♙'},
+    {id:'world',label:'โลก / กฎของโลก',icon:'◎'}, {id:'location',label:'สถานที่',icon:'⌖'},
+    {id:'history',label:'ประวัติศาสตร์ / ไทม์ไลน์',icon:'◷'}, {id:'organization',label:'องค์กร / กลุ่ม',icon:'♧'},
+    {id:'system',label:'ระบบพลัง / เวทมนตร์',icon:'✧'}, {id:'lore',label:'ตำนาน / ข้อมูลอื่น ๆ',icon:'▤'}
+  ];
+  const dataIcon = id => (DATA_CATS.find(x => x.id === id) || DATA_CATS[7]).icon;
+  const dataLabel = id => (DATA_CATS.find(x => x.id === id) || DATA_CATS[7]).label;
+  const knowledge = () => { const n=N(); if (!n) return []; n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : []; return n.knowledge; };
+  function renderData() {
+    const n=N(); if (!n) return;
+    if (!knowledge().some(x => x.id === activeDataId)) activeDataId = null;
+    $('#dataCategories').innerHTML = DATA_CATS.map(c => `<button class="data-cat${dataCategory===c.id?' on':''}" data-dcat="${c.id}"><span>${c.icon} &nbsp;${c.label}</span><small>${c.id==='all'?knowledge().length:knowledge().filter(x=>x.category===c.id).length}</small></button>`).join('');
+    renderDataList(); renderDataDetail();
+  }
+  function filteredKnowledge() {
+    const q=($('#dataSearch').value||'').trim().toLowerCase();
+    return knowledge().filter(k => (dataCategory==='all'||k.category===dataCategory) && (!q || [k.title,k.summary,k.body,k.tags].join(' ').toLowerCase().includes(q)));
+  }
+  function renderDataList() {
+    const list=$('#dataList'), layout=$('#dataLayout').value; list.classList.toggle('layout-list',layout==='list'); list.innerHTML='';
+    const arr=filteredKnowledge();
+    if (!arr.length) { list.innerHTML=`<div class="data-empty">ยังไม่มีข้อมูลในหมวดนี้<br>กด <b>＋ เพิ่มข้อมูล</b> เพื่อสร้างรายการ หรือเปลี่ยนหมวดหมู่</div>`; return; }
+    arr.forEach(k=>{ const b=document.createElement('button'); b.className='data-card'+(k.id===activeDataId?' active':''); b.innerHTML=`<div class="data-card-top"><div class="data-card-icon">${dataIcon(k.category)}</div><div style="min-width:0"><h3>${esc(k.title)}</h3><div class="page-sub">${esc(dataLabel(k.category))}</div></div></div><p>${esc(k.summary || k.body || 'ยังไม่มีคำอธิบาย')}</p><div class="data-tags">${String(k.tags||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,4).map(t=>`<span class="data-tag">${esc(t)}</span>`).join('')}</div>`; b.onclick=()=>{activeDataId=k.id;renderDataList();renderDataDetail();}; list.appendChild(b); });
+  }
+  function renderDataDetail() {
+    const box=$('#dataDetail'), k=knowledge().find(x=>x.id===activeDataId);
+    if (!k) { box.innerHTML='<div class="data-detail-empty"><div class="data-empty-mark">✧</div><strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong><p class="page-sub">รายละเอียด ความเชื่อมโยง และบันทึกอิสระจะแสดงที่นี่</p></div>'; return; }
+    box.innerHTML=`<div class="data-detail-form"><div class="data-detail-head"><div><p class="eyebrow">${esc(dataLabel(k.category))}</p><h2>รายละเอียดข้อมูล</h2></div><button class="icon-btn" id="dataDelete" title="ลบรายการ">⌫</button></div>
+      <div class="field"><label for="dkTitle">ชื่อรายการ</label><input class="input" id="dkTitle" value="${esc(k.title)}" placeholder="ชื่อข้อมูล"></div>
+      <div class="field"><label for="dkCategory">หมวดหมู่</label><select class="select" id="dkCategory">${DATA_CATS.filter(x=>x.id!=='all').map(x=>`<option value="${x.id}" ${k.category===x.id?'selected':''}>${x.label}</option>`).join('')}</select></div>
+      <div class="field"><label for="dkSummary">สรุปสั้น</label><textarea class="area" id="dkSummary" rows="3" placeholder="ใจความสำคัญสำหรับค้นหาและอ้างอิง"></textarea></div>
+      <div class="field"><label for="dkBody">รายละเอียด / บันทึกอิสระ</label><textarea class="area data-body" id="dkBody" rows="9" placeholder="เขียนรายละเอียดได้เต็มที่ ไม่จำกัดรูปแบบ"></textarea></div>
+      <div class="field"><label for="dkTags">แท็ก (คั่นด้วยจุลภาค)</label><input class="input" id="dkTags" placeholder="เช่น ราชวงศ์, สงคราม, ตัวเอก"></div>
+      <div class="field"><label for="dkLinks">เชื่อมโยงกับรายการอื่น (ชื่อรายการ คั่นด้วยจุลภาค)</label><input class="input" id="dkLinks" placeholder="เช่น ราชอาณาจักรเหนือ, สงครามครั้งที่หนึ่ง"><p class="page-sub">การเชื่อมโยงเป็นข้อความอ้างอิงที่แก้ไขเองได้</p></div>
+      <div class="data-detail-actions"><button class="btn primary" id="dataSave">บันทึกรายการ</button><button class="btn" id="dataDuplicate">ทำสำเนา</button></div></div>`;
+    $('#dkSummary').value=k.summary||''; $('#dkBody').value=k.body||''; $('#dkTags').value=k.tags||''; $('#dkLinks').value=(k.links||[]).join(', ');
+    $('#dataSave').onclick=()=>{ k.title=$('#dkTitle').value.trim()||'ไม่มีชื่อ'; k.category=$('#dkCategory').value; k.summary=$('#dkSummary').value; k.body=$('#dkBody').value; k.tags=$('#dkTags').value; k.links=$('#dkLinks').value.split(',').map(x=>x.trim()).filter(Boolean); touchNovel(); renderData(); toast('บันทึกข้อมูลแล้ว'); };
+    $('#dataDelete').onclick=()=>askYes('ลบข้อมูลรายการนี้?',`ลบ “${k.title}” ออกจากคลังข้อมูลของเรื่องนี้`,()=>{const i=knowledge().findIndex(x=>x.id===k.id);if(i>=0)knowledge().splice(i,1);activeDataId=null;touchNovel();renderData();toast('ลบข้อมูลแล้ว');},'ลบ');
+    $('#dataDuplicate').onclick=()=>{const copy=JSON.parse(JSON.stringify(k));copy.id=uid();copy.title += ' - สำเนา';knowledge().push(copy);activeDataId=copy.id;touchNovel();renderData();toast('ทำสำเนาแล้ว');};
+  }
+  $('#dataCategories').addEventListener('click',e=>{const b=e.target.closest('[data-dcat]');if(!b)return;dataCategory=b.dataset.dcat;renderData();});
+  $('#dataSearch').addEventListener('input',renderDataList); $('#dataLayout').addEventListener('change',renderDataList);
+  $('#dataAdd').onclick=()=>{const k={id:uid(),category:dataCategory==='all'?'lore':dataCategory,title:'ข้อมูลใหม่',summary:'',body:'',tags:'',links:[],createdAt:Date.now(),updatedAt:Date.now()};knowledge().push(k);activeDataId=k.id;touchNovel();renderData();$('#dkTitle').focus();$('#dkTitle').select();};
+  function downloadJSON(obj,filename){const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  $('#dataExport').onclick=()=>{const n=N();if(!n)return;commitEditor();persist();downloadJSON({format:'LUMEN-story-archive',version:1,exportedAt:new Date().toISOString(),novel:n},(n.title||'lumen').replace(/[\\/:*?"<>|]/g,'_')+'.json');toast('ส่งออกข้อมูลเรื่องนี้แล้ว');};
+  $('#dataExportAll').onclick=()=>{commitEditor();persist();downloadJSON({format:'LUMEN-library',version:1,exportedAt:new Date().toISOString(),library:lib},'lumen-library-backup.json');toast('ส่งออกข้อมูลทั้งหมดแล้ว');};
+  $('#dataImportBtn').onclick=()=>$('#dataImportFile').click();
+  $('#dataImportFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const d=JSON.parse(await f.text());let incoming=d.novel||(d.library&&d.library.novels&&d.library.novels.find(x=>x.id===nid))||(d.novels&&d.novels.find(x=>x.id===nid));if(!incoming&&d.library&&Array.isArray(d.library.novels)){askYes('นำเข้าทั้งคลัง?',`ไฟล์นี้มี ${d.library.novels.length} เรื่อง การนำเข้าจะเพิ่มเรื่องเหล่านี้เข้าไป`,()=>{const ids=new Set(lib.novels.map(n=>n.id));d.library.novels.forEach(n=>{const cp=JSON.parse(JSON.stringify(n));if(ids.has(cp.id))cp.id=uid();lib.novels.push(cp);});lib=normalize(lib);persist();go('home');toast('นำเข้าคลังแล้ว');},'นำเข้า');return;}if(!incoming)throw new Error('ไม่พบข้อมูลนิยาย');const cp=JSON.parse(JSON.stringify(incoming));if(cp.id===nid){askYes('แทนที่ข้อมูลเรื่องนี้?',`ข้อมูลของ “${N().title}” จะถูกแทนด้วยข้อมูลจากไฟล์`,()=>{const ix=lib.novels.findIndex(n=>n.id===nid);lib.novels[ix]=cp;lib=normalize(lib);nid=cp.id;activeDataId=null;persist();go('data');toast('นำเข้าข้อมูลแล้ว');},'แทนที่');}else{cp.id=uid();cp.title=(cp.title||'เรื่องนำเข้า')+' (นำเข้า)';lib.novels.push(cp);persist();go('data',{novel:cp.id});toast('นำเข้าเป็นเรื่องใหม่แล้ว');}}catch(err){toast('ไฟล์ JSON ไม่ถูกต้องหรือไม่ใช่ไฟล์ LUMEN');}};
+
+  /* ---------- settings & backup ---------- */
+  const setBack = $('#settingsBackdrop');
+  function openSettings() { $('#setFont').value = String(lib.settings.fontSize); $('#setAuto').checked = lib.settings.autosave; setBack.classList.add('open'); }
+  function closeSettings() { setBack.classList.remove('open'); }
+  $('#settingsBtn').onclick = openSettings; $('#settingsClose').onclick = closeSettings;
+  setBack.addEventListener('click', e => { if (e.target === setBack) closeSettings(); });
+  $('#setFont').onchange = e => { lib.settings.fontSize = +e.target.value; editor.style.fontSize = e.target.value + 'px'; persist(); toast('บันทึกขนาดตัวอักษรแล้ว'); };
+  $('#setAuto').onchange = e => { lib.settings.autosave = e.target.checked; persist(); toast(e.target.checked ? 'เปิดบันทึกอัตโนมัติ' : 'ปิดบันทึกอัตโนมัติ'); };
+  $('#settingsSave').onclick = () => { commitEditor(); persist(); toast('บันทึกแล้ว'); };
+  $('#backupMake').onclick = () => {
+    commitEditor(); const box = $('#backupBox'); box.value = JSON.stringify(lib); box.focus(); box.select();
+    try { navigator.clipboard.writeText(box.value).then(() => toast('คัดลอกข้อมูลสำรองแล้ว'), () => toast('เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก')); }
+    catch(e) { toast('เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก'); }
+  };
+  $('#backupRestore').onclick = () => {
+    let d; try { d = JSON.parse($('#backupBox').value); } catch(e) { return toast('ข้อมูลในช่องไม่ถูกต้อง'); }
+    if (!d || !Array.isArray(d.novels)) return toast('ไม่พบข้อมูลนิยายในช่องนี้');
+    askYes('กู้คืนข้อมูล', `จะแทนที่ข้อมูลปัจจุบันด้วยข้อมูลสำรอง ${d.novels.length} เรื่อง`, () => {
+      lib = normalize(d); wcache.clear(); nid = null; cid = null; persist(); closeSettings(); go('home'); toast('กู้คืนข้อมูลแล้ว');
+    }, 'กู้คืน');
+  };
+
+  /* ---------- more menu ---------- */
+  const moreBtn = $('#moreBtn'); moreBtn.setAttribute('data-menu', '');
+  moreBtn.onclick = () => {
+    if (menu.classList.contains('open')) return closeMenu();
+    const items = [{label:'＋ เริ่มเรื่องใหม่', run:newNovel}];
+    if (N() && view !== 'home') {
+      items.push('-',
+        {label:'✎ เปลี่ยนชื่อเรื่อง', run:() => askText('ชื่อเรื่อง', '', N().title, v => { N().title = (v || '').trim() || 'เรื่องไม่มีชื่อ'; touchNovel(); $('#crumb').textContent = N().title; if (view === 'cover') renderCover(); if (view === 'story') renderStory(); }, 'บันทึก')},
+        {label:'＋ เพิ่มบทใหม่', run:() => addChapter(view === 'write')},
+        {label:'◈ เปิดคลังข้อมูลของเรื่อง', run:() => go('data')});
+      if (view === 'write') items.push({label:'⌫ ล้างเนื้อหาบทนี้', danger:true, run:() => askYes('ล้างบทนี้?', 'เนื้อหาในบทนี้จะถูกลบทั้งหมด', () => { editor.innerHTML = ''; commitEditor(); stats(); persist(); toast('ล้างบทแล้ว'); }, 'ล้าง')});
+      items.push('-', {label:'⌫ ลบนิยายเรื่องนี้', danger:true, run:() => { const n = N(); askYes('ลบนิยายทั้งเรื่อง?', `${n.title} พร้อมทุกบทและตัวละคร จะถูกลบถาวร`, () => { lib.novels = lib.novels.filter(x => x.id !== n.id); nid = null; cid = null; persist(); go('home'); toast('ลบนิยายแล้ว'); }, 'ลบทั้งเรื่อง'); }});
+    }
+    openMenu(moreBtn, items, 'right');
+  };
+
+  /* ---------- keys ---------- */
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+    if (mod && k === 's') { e.preventDefault(); commitEditor(); persist(); toast('บันทึกแล้ว'); }
+    if (mod && k === 'k' && N() && view !== 'home') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') {
+      if (dBack.classList.contains('open')) return closeDialog();
+      if (sBack.classList.contains('open')) return closeSearch();
+      if (setBack.classList.contains('open')) return closeSettings();
+      if (menu.classList.contains('open')) return closeMenu();
+      if (cw.classList.contains('open')) return closeCharacterWindow();
+      if ($('#fontMenu').classList.contains('show')) return $('#fontMenu').classList.remove('show');
+      if (document.body.classList.contains('focus')) toggleFocus();
+    }
+  });
+
+  go('home');
+})();
+</script>
+
+</body></html>

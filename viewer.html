@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Asset Viewer — Campfire Diorama</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Anuphan&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0F1720;color:#E8D8B0;font-family:Anuphan,sans-serif}
+header{padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.pixel{font-family:Silkscreen,monospace;color:#F2A65A}
+#grid{display:flex;flex-wrap:wrap;gap:8px;padding:12px}
+button{background:#2a2118;color:#E8D8B0;border:2px solid #4a3220;padding:8px 10px;cursor:pointer}
+button.sel{border-color:#F2A65A}canvas{display:block;width:100%;height:60vh;background:#1E2A24}
+p{padding:0 16px;opacity:.8;font-size:13px}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<header><span class="pixel">🧊 ASSET VIEWER</span><a href="index.html" style="color:#F2A65A">← กลับไปเล่นเกม</a><span id="name"></span></header>
+<canvas id="v"></canvas>
+<div id="grid"></div>
+<p>1 หน่วย = 1 tile · ผิวบน tile y=0.8 · flatShading · roughness 1 · แสงเฉพาะชิ้นเรืองแสง (campfire/torch/lantern/furnace/crystal) · โมเดลขยับได้มี userData.update(t,dt)</p>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { create, listAssets, createSurvivor } from './js/campfire-assets.js';
+const canvas=document.getElementById('v'), grid=document.getElementById('grid'), name=document.getElementById('name');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.BasicShadowMap;
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0f1720);
+const cam=new THREE.PerspectiveCamera(35,2,0.1,100); cam.position.set(3,2.6,3);
+const ctl=new OrbitControls(cam,canvas); ctl.target.set(0,0.7,0);
+scene.add(new THREE.HemisphereLight(0xbfd4ff,0x2a2118,0.9));
+const sun=new THREE.DirectionalLight(0xfff2d9,1.6); sun.position.set(5,8,3); sun.castShadow=true; scene.add(sun);
+const ground=new THREE.Mesh(new THREE.BoxGeometry(3,0.8,3),new THREE.MeshStandardMaterial({color:0x1E2A24,roughness:1}));
+ground.position.y=-0.4; ground.receiveShadow=true; scene.add(ground);
+let cur=null; const clock=new THREE.Clock();
+function show(id){
+  if(cur){scene.remove(cur); cur.traverse(o=>{if(o.geometry)o.geometry.dispose();}); /* materials are shared/cached — keep */ }
+  cur = id==='survivor'? createSurvivor({tool:'sword',off:'shield',hat:'iron',armor:'iron'}): create(id);
+  scene.add(cur);
+  if(cur.userData.update) {} // animated in loop
+  name.textContent='— '+id;
+  document.querySelectorAll('#grid button').forEach(b=>b.classList.toggle('sel',b.textContent===id));
+}
+[...listAssets(),'survivor'].forEach(id=>{const b=document.createElement('button');b.textContent=id;b.onclick=()=>show(id);grid.appendChild(b);});
+function size(){const w=innerWidth,h=innerHeight*0.6;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+addEventListener('resize',size); size(); show('campfire');
+renderer.setAnimationLoop(()=>{const dt=Math.min(.05,clock.getDelta()),t=clock.elapsedTime;
+  try{cur?.userData?.update?.(t,dt);}catch{} ctl.update(); renderer.render(scene,cam);});
+</script></body></html>
